@@ -10,7 +10,12 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-gray-900">套利仪表盘</h1>
+      <div className="flex items-end justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">套利仪表盘</h1>
+          <p className="text-sm text-gray-600">监控跨交易所价差与历史机会</p>
+        </div>
+      </div>
 
       <ArbitrageOverview
         opportunities={marketData.arbitrageOpportunities}
@@ -21,11 +26,15 @@ export default function Dashboard() {
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">机会列表</h2>
-          <ArbitrageHistory opportunities={marketData.arbitrageOpportunities} />
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <ArbitrageHistory opportunities={marketData.arbitrageOpportunities} />
+          </div>
         </div>
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-gray-900">价格热力图</h2>
-          <PriceHeatmap prices={marketData.prices} />
+          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+            <PriceHeatmap prices={marketData.prices} />
+          </div>
         </div>
       </section>
     </div>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <style>
+      .g{fill:#65a30d}
+      .t{fill:#1f2937;font:700 44px system-ui,Segoe UI,Helvetica,Arial,sans-serif}
+    </style>
+  </defs>
+  <circle cx="100" cy="100" r="88" fill="#eaf7e5" />
+  <path class="g" d="M58 72c18-20 52-22 74-6l7-10c3-5 11-3 11 3l-3 28c-1 5-6 8-10 5l-24-16c-5-3-5-11 1-13l9-3c-18-10-41-7-56 8-3 4-9 4-12 0s-3-9 3-12z"/>
+  <path class="g" d="M142 128c-18 20-52 22-74 6l-7 10c-3 5-11 3-11-3l3-28c1-5 6-8 10-5l24 16c5 3 5 11-1 13l-9 3c18 10 41 7 56-8 3-4 9-4 12 0s3 9-3 12z"/>
+  <text class="t" x="64" y="95">¥</text>
+  <text class="t" x="116" y="140">£</text>
+</svg>
