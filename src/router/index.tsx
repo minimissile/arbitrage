@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom'
 import App from '@/App'
-import Dashboard from '@/pages/Dashboard'
-import Funding from '@/pages/Funding'
+import Dashboard from '@/views/Dashboard'
+import Funding from '@/views/Funding'
 
 const router = createBrowserRouter([
   {

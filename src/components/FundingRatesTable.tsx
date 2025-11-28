@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Button, HStack, Input, Table, Thead, Tbody, Tr, Th, Td, Box, Spinner, Text } from '@chakra-ui/react'
 import { fetchMarkPrices, formatFundingRate, formatPrice, formatTime } from '../api/backpack'
 import type { MarkPriceItem } from '../api/backpack'
 
@@ -18,50 +19,46 @@ export default function FundingRatesTable() {
   }, [data, search])
 
   return (
-    <div className="funding-table">
-      <div className="toolbar">
-        <input placeholder="搜索交易对 (如 BTC_USDC_PERP)" value={search} onChange={e => setSearch(e.target.value)} />
-        <button onClick={() => refetch()} disabled={isFetching}>
+    <Box p={4}>
+      <HStack gap={3} mb={3}>
+        <Input placeholder="搜索交易对 (如 BTC_USDC_PERP)" value={search} onChange={e => setSearch(e.target.value)} />
+        <Button onClick={() => refetch()} disabled={isFetching} colorScheme="brand">
           {isFetching ? '刷新中…' : '手动刷新'}
-        </button>
-      </div>
+        </Button>
+      </HStack>
 
-      {isLoading && <p>加载中…</p>}
-      {isError && <p>加载失败，请稍后重试</p>}
+      {isLoading && (
+        <HStack>
+          <Spinner />
+          <Text>加载中…</Text>
+        </HStack>
+      )}
+      {isError && <Text>加载失败，请稍后重试</Text>}
 
       {!isLoading && !isError && (
-        <table>
-          <thead>
-            <tr>
-              <th>Symbol</th>
-              <th>Mark Price</th>
-              <th>Index Price</th>
-              <th>Funding Rate</th>
-              <th>Next Funding</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>Symbol</Th>
+              <Th>Mark Price</Th>
+              <Th>Index Price</Th>
+              <Th>Funding Rate</Th>
+              <Th>Next Funding</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
             {rows.map(r => (
-              <tr key={r.symbol}>
-                <td>{r.symbol}</td>
-                <td>{formatPrice(r.markPrice)}</td>
-                <td>{formatPrice(r.indexPrice)}</td>
-                <td>{formatFundingRate(r.fundingRate)}</td>
-                <td>{formatTime(r.nextFundingTimestamp)}</td>
-              </tr>
+              <Tr key={r.symbol}>
+                <Td>{r.symbol}</Td>
+                <Td>{formatPrice(r.markPrice)}</Td>
+                <Td>{formatPrice(r.indexPrice)}</Td>
+                <Td>{formatFundingRate(r.fundingRate)}</Td>
+                <Td>{formatTime(r.nextFundingTimestamp)}</Td>
+              </Tr>
             ))}
-          </tbody>
-        </table>
+          </Tbody>
+        </Table>
       )}
-
-      <style>{`
-        .funding-table { padding: 16px; }
-        .toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 8px; border-bottom: 1px solid #eaeaea; text-align: left; }
-        thead th { position: sticky; top: 0; background: #fff; }
-        tbody tr:hover { background: #fafafa; }
-      `}</style>
-    </div>
+    </Box>
   )
 }

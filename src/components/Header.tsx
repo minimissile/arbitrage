@@ -30,13 +30,15 @@ export function Header() {
             <nav className="ml-4 flex gap-2">
               <Link
                 to="/"
-                className={`rounded-md px-3 py-1.5 transition-colors ${!isFunding ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                className={`rounded-md px-3 py-1.5 transition-colors ${!isFunding ? 'text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                style={!isFunding ? { backgroundColor: 'var(--chakra-colors-brand-600)' } : undefined}
               >
                 仪表盘
               </Link>
               <Link
                 to="/funding"
-                className={`rounded-md px-3 py-1.5 transition-colors ${isFunding ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                className={`rounded-md px-3 py-1.5 transition-colors ${isFunding ? 'text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}
+                style={isFunding ? { backgroundColor: 'var(--chakra-colors-brand-600)' } : undefined}
               >
                 资金费率
               </Link>
