@@ -1,0 +1,90 @@
+/**
+ * Zustand 全局状态（ArbitrageStore）
+ * 作用：集中管理市场数据、加载状态、错误信息与告警设置等
+ * 说明：
+ * - marketData：页面展示所需的聚合数据
+ * - addXXX：增量写入数据并做容量控制（slice），避免无限增长导致性能问题
+ */
+import { create } from 'zustand'
+import type { MarketData, AlertSettings, ArbitrageOpportunity, PriceData, FundingRateData } from '@/types'
+
+interface ArbitrageStore {
+  marketData: MarketData
+  isLoading: boolean
+  error: string | null
+  alertSettings: AlertSettings
+  selectedTimeframe: string
+
+  setMarketData: (data: Partial<MarketData>) => void
+  setLoading: (loading: boolean) => void
+  setError: (error: string | null) => void
+  updateAlertSettings: (settings: Partial<AlertSettings>) => void
+  setTimeframe: (timeframe: string) => void
+  addPriceData: (data: PriceData) => void
+  addArbitrageOpportunity: (opportunity: ArbitrageOpportunity) => void
+  addFundingRateData: (data: FundingRateData) => void
+}
+
+export const useArbitrageStore = create<ArbitrageStore>(set => ({
+  marketData: {
+    prices: [],
+    arbitrageOpportunities: [],
+    fundingRates: [],
+    triangularOpportunities: []
+  },
+  isLoading: false,
+  error: null,
+  alertSettings: {
+    minSpreadPercentage: 0.5,
+    minProfit: 10,
+    enabled: true,
+    soundEnabled: true,
+    emailEnabled: false
+  },
+  selectedTimeframe: '1h',
+
+  setMarketData: data =>
+    set(state => ({
+      // 合并局部更新，保持不可变数据结构
+      marketData: { ...state.marketData, ...data }
+    })),
+
+  setLoading: loading => set({ isLoading: loading }),
+
+  setError: error => set({ error }),
+
+  updateAlertSettings: settings =>
+    set(state => ({
+      // 更新告警设置，保留既有字段
+      alertSettings: { ...state.alertSettings, ...settings }
+    })),
+
+  setTimeframe: timeframe => set({ selectedTimeframe: timeframe }),
+
+  addPriceData: data =>
+    set(state => ({
+      marketData: {
+        ...state.marketData,
+        // 价格数据保留最近 1000 条，避免内存爆涨
+        prices: [...state.marketData.prices, data].slice(-1000)
+      }
+    })),
+
+  addArbitrageOpportunity: opportunity =>
+    set(state => ({
+      marketData: {
+        ...state.marketData,
+        // 套利机会列表保留最新 50 条（按时间倒序）
+        arbitrageOpportunities: [opportunity, ...state.marketData.arbitrageOpportunities].slice(0, 50)
+      }
+    })),
+
+  addFundingRateData: data =>
+    set(state => ({
+      marketData: {
+        ...state.marketData,
+        // 资金费率数据保留最近 100 条
+        fundingRates: [...state.marketData.fundingRates, data].slice(-100)
+      }
+    }))
+}))

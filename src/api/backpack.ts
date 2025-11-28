@@ -11,7 +11,7 @@ export interface MarkPriceItem {
 export async function fetchMarkPrices(): Promise<MarkPriceItem[]> {
   const url = '/api/v1/markPrices'
   const res = await axios.get(url, {
-    timeout: 10000,
+    timeout: 10000
   })
   return res.data as MarkPriceItem[]
 }
@@ -38,4 +38,3 @@ export function formatTime(ts: number): string {
     return '-'
   }
 }
-
