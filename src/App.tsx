@@ -1,15 +1,16 @@
 import './App.css'
 import { Outlet } from 'react-router-dom'
 import { Header } from './components/Header'
+import { Box, Container } from '@chakra-ui/react'
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <Box minH="100vh" bg="gray.50">
       <Header />
-      <main className="container mx-auto px-4 py-6">
+      <Container maxW="container.lg" py={6}>
         <Outlet />
-      </main>
-    </div>
+      </Container>
+    </Box>
   )
 }
 

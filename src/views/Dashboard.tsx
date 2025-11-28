@@ -1,21 +1,20 @@
 import { useState } from 'react'
 import { useArbitrageStore } from '@/stores/arbitrageStore'
 import { ArbitrageOverview } from '@/components/ArbitrageOverview'
-import { ArbitrageHistory } from '@/components/ArbitrageHistory'
-import { PriceHeatmap } from '@/components/PriceHeatmap'
+import ArbitrageHistoryChakra from '@/components/ArbitrageHistoryChakra'
+import PriceHeatmapChakra from '@/components/PriceHeatmapChakra'
+import { Box, Heading, Text, Grid, GridItem } from '@chakra-ui/react'
 
 export default function Dashboard() {
   const { marketData } = useArbitrageStore()
   const [monitoring, setMonitoring] = useState(true)
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-end justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">套利仪表盘</h1>
-          <p className="text-sm text-gray-600">监控跨交易所价差与历史机会</p>
-        </div>
-      </div>
+    <Box display="grid" gap={6}>
+      <Box>
+        <Heading size="lg" color="gray.900">套利仪表盘</Heading>
+        <Text fontSize="sm" color="gray.600">监控跨交易所价差与历史机会</Text>
+      </Box>
 
       <ArbitrageOverview
         opportunities={marketData.arbitrageOpportunities}
@@ -23,20 +22,24 @@ export default function Dashboard() {
         onToggleMonitoring={() => setMonitoring(m => !m)}
       />
 
-      <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">机会列表</h2>
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <ArbitrageHistory opportunities={marketData.arbitrageOpportunities} />
-          </div>
-        </div>
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-gray-900">价格热力图</h2>
-          <div className="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
-            <PriceHeatmap prices={marketData.prices} />
-          </div>
-        </div>
-      </section>
-    </div>
+      <Grid templateColumns={{ base: '1fr', lg: '1fr 1fr' }} gap={6}>
+        <GridItem>
+          <Box display="grid" gap={4}>
+            <Heading size="md" color="gray.900">机会列表</Heading>
+            <Box borderWidth="1px" borderColor="gray.200" bg="white" p={4} borderRadius="xl" boxShadow="sm">
+              <ArbitrageHistoryChakra opportunities={marketData.arbitrageOpportunities} />
+            </Box>
+          </Box>
+        </GridItem>
+        <GridItem>
+          <Box display="grid" gap={4}>
+            <Heading size="md" color="gray.900">价格热力图</Heading>
+            <Box borderWidth="1px" borderColor="gray.200" bg="white" p={4} borderRadius="xl" boxShadow="sm">
+              <PriceHeatmapChakra prices={marketData.prices} />
+            </Box>
+          </Box>
+        </GridItem>
+      </Grid>
+    </Box>
   )
 }

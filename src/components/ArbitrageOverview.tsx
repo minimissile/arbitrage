@@ -1,5 +1,6 @@
 // 套利概览卡片：汇总当前最佳机会、平均价差、总机会数与最近机会
 import { TrendingUp, DollarSign, AlertTriangle, Clock } from 'lucide-react'
+import { Box, Grid, GridItem, Text, Heading, Button, Flex } from '@chakra-ui/react'
 import type { ArbitrageOpportunity } from '@/types'
 
 interface ArbitrageOverviewProps {
@@ -20,83 +21,102 @@ export function ArbitrageOverview({ opportunities, isMonitoring, onToggleMonitor
   ).length
 
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
-      {/* 最佳机会卡片 */}
-      <div className="card">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600">最佳机会</p>
-            <p className="text-success-600 text-2xl font-bold">
+    <Grid templateColumns={{ base: '1fr', md: '1fr 1fr', lg: 'repeat(4, 1fr)' }} gap={6}>
+      <Box borderWidth="1px" borderColor="gray.200" bg="white" borderRadius="lg" p={4} boxShadow="sm">
+        <Flex align="center" justify="space-between">
+          <Box>
+            <Text fontSize="sm" color="gray.600">
+              最佳机会
+            </Text>
+            <Heading size="lg" color="green.600">
               {bestOpportunity ? `${bestOpportunity.spreadPercentage.toFixed(2)}%` : '0.00%'}
-            </p>
-            <p className="mt-1 text-xs text-gray-500">
+            </Heading>
+            <Text fontSize="xs" color="gray.500">
               {bestOpportunity
                 ? `${bestOpportunity.pair}（${bestOpportunity.buyExchange} → ${bestOpportunity.sellExchange}）`
                 : '暂无机会'}
-            </p>
-          </div>
-          <div className="bg-success-100 rounded-lg p-3">
-            <TrendingUp className="text-success-600 h-6 w-6" />
-          </div>
-        </div>
-      </div>
+            </Text>
+          </Box>
+          <Box bg="green.100" borderRadius="md" p={3}>
+            <TrendingUp className="h-6 w-6" color="#16a34a" />
+          </Box>
+        </Flex>
+      </Box>
 
-      {/* 平均价差卡片 */}
-      <div className="card">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600">平均价差</p>
-            <p className="text-primary-600 text-2xl font-bold">{averageSpread.toFixed(2)}%</p>
-            <p className="mt-1 text-xs text-gray-500">所有交易对</p>
-          </div>
-          <div className="bg-primary-100 rounded-lg p-3">
-            <DollarSign className="text-primary-600 h-6 w-6" />
-          </div>
-        </div>
-      </div>
+      <Box borderWidth="1px" borderColor="gray.200" bg="white" borderRadius="lg" p={4} boxShadow="sm">
+        <Flex align="center" justify="space-between">
+          <Box>
+            <Text fontSize="sm" color="gray.600">
+              平均价差
+            </Text>
+            <Heading size="lg" color="brand.600">
+              {averageSpread.toFixed(2)}%
+            </Heading>
+            <Text fontSize="xs" color="gray.500">
+              所有交易对
+            </Text>
+          </Box>
+          <Box bg="brand.100" borderRadius="md" p={3}>
+            <DollarSign className="h-6 w-6" color="#7cba59" />
+          </Box>
+        </Flex>
+      </Box>
 
-      {/* 机会总数卡片 */}
-      <div className="card">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600">机会总数</p>
-            <p className="text-warning-600 text-2xl font-bold">{totalOpportunities}</p>
-            <p className="mt-1 text-xs text-gray-500">当前活跃</p>
-          </div>
-          <div className="bg-warning-100 rounded-lg p-3">
-            <AlertTriangle className="text-warning-600 h-6 w-6" />
-          </div>
-        </div>
-      </div>
+      <Box borderWidth="1px" borderColor="gray.200" bg="white" borderRadius="lg" p={4} boxShadow="sm">
+        <Flex align="center" justify="space-between">
+          <Box>
+            <Text fontSize="sm" color="gray.600">
+              机会总数
+            </Text>
+            <Heading size="lg" color="orange.600">
+              {totalOpportunities}
+            </Heading>
+            <Text fontSize="xs" color="gray.500">
+              当前活跃
+            </Text>
+          </Box>
+          <Box bg="orange.100" borderRadius="md" p={3}>
+            <AlertTriangle className="h-6 w-6" color="#f59e0b" />
+          </Box>
+        </Flex>
+      </Box>
 
-      {/* 最近机会卡片 */}
-      <div className="card">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-gray-600">最近（5分钟）</p>
-            <p className="text-info-600 text-2xl font-bold">{recentOpportunities}</p>
-            <p className="mt-1 text-xs text-gray-500">近 5 分钟</p>
-          </div>
-          <div className="bg-primary-100 rounded-lg p-3">
-            <Clock className="text-primary-600 h-6 w-6" />
-          </div>
-        </div>
-      </div>
+      <Box borderWidth="1px" borderColor="gray.200" bg="white" borderRadius="lg" p={4} boxShadow="sm">
+        <Flex align="center" justify="space-between">
+          <Box>
+            <Text fontSize="sm" color="gray.600">
+              最近（5分钟）
+            </Text>
+            <Heading size="lg" color="brand.600">
+              {recentOpportunities}
+            </Heading>
+            <Text fontSize="xs" color="gray.500">
+              近 5 分钟
+            </Text>
+          </Box>
+          <Box bg="brand.100" borderRadius="md" p={3}>
+            <Clock className="h-6 w-6" color="#7cba59" />
+          </Box>
+        </Flex>
+      </Box>
 
-      {/* Control Panel */}
-      <div className="lg:col-span-4">
-        <div className="card">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900">监控控制</h3>
-              <p className="text-sm text-gray-600">{isMonitoring ? '实时监控已开启' : '监控已暂停'}</p>
-            </div>
-            <button onClick={onToggleMonitoring} className={`btn-${isMonitoring ? 'secondary' : 'primary'}`}>
+      <GridItem colSpan={{ base: 1, lg: 4 }}>
+        <Box borderWidth="1px" borderColor="gray.200" bg="white" borderRadius="lg" p={4} boxShadow="sm">
+          <Flex align="center" justify="space-between">
+            <Box>
+              <Heading size="md" color="gray.900">
+                监控控制
+              </Heading>
+              <Text fontSize="sm" color="gray.600">
+                {isMonitoring ? '实时监控已开启' : '监控已暂停'}
+              </Text>
+            </Box>
+            <Button onClick={onToggleMonitoring} colorScheme={isMonitoring ? 'gray' : 'brand'}>
               {isMonitoring ? '暂停监控' : '开始监控'}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+            </Button>
+          </Flex>
+        </Box>
+      </GridItem>
+    </Grid>
   )
 }
