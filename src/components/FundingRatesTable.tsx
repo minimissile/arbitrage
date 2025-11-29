@@ -17,6 +17,7 @@ import {
   Flex
 } from '@chakra-ui/react'
 import { useUnifiedFundingQuery, groupFundingRows, fundingFormat } from '@/hooks/querys'
+import { ArrowDown, ArrowUp } from 'lucide-react'
 
 /**
  * 资金费率表格
@@ -92,54 +93,24 @@ export default function FundingRatesTable() {
                 </option>
               ))}
             </Select>
-            <Select value={order} onChange={e => setOrder(e.target.value as any)} maxW="160px">
-              <option value="desc">按资金费率高→低</option>
-              <option value="asc">按资金费率低→高</option>
-            </Select>
+
+            <Button
+              onClick={() => setOrder(o => (o === 'desc' ? 'asc' : 'desc'))}
+              variant={'outline'}
+              flexShrink={0}
+              gap={1}
+              fontWeight={'normal'}
+            >
+              <Text as="span">资金费率</Text>
+              <div>{order === 'desc' ? <ArrowDown size={16} /> : <ArrowUp size={16} />}</div>
+            </Button>
           </Flex>
         </HStack>
       </Box>
 
-      {isLoading && (
-        <Table>
-          <Thead position="sticky" top="64px" zIndex={9} bg="white">
-            <Tr>
-              <Th>币种</Th>
-              <Th>交易所 / 当前资金费率 / 当前价格 / 日化收益 / 结算周期 / 下一次结算时间</Th>
-              <Th>最大资金费率差</Th>
-              <Th>最近结算时间</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {Array.from({ length: 8 }).map((_, i) => (
-              <Tr key={`loading-${i}`}>
-                <Td>
-                  <Skeleton w="48px" h="16px" borderRadius="md" />
-                </Td>
-                <Td>
-                  <HStack gap={2} wrap="wrap">
-                    {Array.from({ length: 3 }).map((__, j) => (
-                      <Box key={`card-${i}-${j}`} px={2} py={2} borderWidth="1px" borderRadius="md" minW="160px">
-                        <Skeleton w="64px" h="12px" mb={2} />
-                        <SkeletonText noOfLines={3} spacing="2" skeletonHeight="10px" />
-                      </Box>
-                    ))}
-                  </HStack>
-                </Td>
-                <Td>
-                  <Skeleton w="72px" h="16px" />
-                </Td>
-                <Td>
-                  <Skeleton w="100px" h="16px" />
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      )}
       {isError && <Text>加载失败，请稍后重试</Text>}
 
-      {!isLoading && !isError && (
+      {!isError && (
         <Table>
           <Thead position="sticky" top="64px" zIndex={9} bg="white">
             <Tr bg={'gray.100'} fontWeight={'bold'}>
@@ -149,45 +120,80 @@ export default function FundingRatesTable() {
               <Th>最近结算时间</Th>
             </Tr>
           </Thead>
-          <Tbody>
-            {sorted.map(g => {
-              const delta = g.delta
-              const nearest = g.nearestTs
-              return (
-                <Tr key={g.symbol}>
-                  <Td>{g.symbol}</Td>
+
+          {isLoading ? (
+            <Tbody>
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Tr key={`loading-${i}`}>
+                  <Td>
+                    <Skeleton w="48px" h="16px" borderRadius="md" />
+                  </Td>
                   <Td>
                     <HStack gap={2} wrap="wrap">
-                      {g.entries.map(e => (
-                        <Box key={e.id ?? `${e.exchange}-${g.symbol}`} px={2} py={1} borderWidth="1px" borderRadius="md">
-                          <Text fontSize="xs">{e.exchange}</Text>
-                          <Text fontSize="sm" fontWeight="medium">
-                            {fundingFormat.formatFundingRate(e.fundingRate)}
-                          </Text>
-                          {e.price !== undefined && (
-                            <Text fontSize="xs" color="gray.600">
-                              价格 {fundingFormat.formatPrice(e.price)}
-                            </Text>
-                          )}
-                          <Text fontSize="xs" color="gray.600">
-                            日化 {fundingFormat.formatFundingRate(e.dailyFundingRate)}
-                          </Text>
-                          <Text fontSize="xs" color="gray.600">
-                            周期 {e.cycle}h
-                          </Text>
-                          <Text fontSize="xs" color="gray.600">
-                            结算 {fundingFormat.formatTime(e.nextFundingTimestamp)}
-                          </Text>
+                      {Array.from({ length: 3 }).map((__, j) => (
+                        <Box key={`card-${i}-${j}`} px={2} py={2} borderWidth="1px" borderRadius="md" minW="160px">
+                          <Skeleton w="64px" h="12px" mb={2} />
+                          <SkeletonText noOfLines={3} spacing="2" skeletonHeight="10px" />
                         </Box>
                       ))}
                     </HStack>
                   </Td>
-                  <Td color={Math.abs(delta) > 0.01 ? 'red.600' : 'gray.700'}>{(delta * 100).toFixed(4)}%</Td>
-                  <Td>{fundingFormat.formatTime(nearest)}</Td>
+                  <Td>
+                    <Skeleton w="72px" h="16px" />
+                  </Td>
+                  <Td>
+                    <Skeleton w="100px" h="16px" />
+                  </Td>
                 </Tr>
-              )
-            })}
-          </Tbody>
+              ))}
+            </Tbody>
+          ) : (
+            <Tbody>
+              {sorted.map(g => {
+                const delta = g.delta
+                const nearest = g.nearestTs
+                return (
+                  <Tr key={g.symbol} px={1}>
+                    <Td py={1.5}>{g.symbol}</Td>
+                    <Td py={1.5}>
+                      <HStack gap={2} wrap="wrap">
+                        {/*各交易所资金费率数据*/}
+                        {g.entries.map(e => (
+                          <Box
+                            fontSize={'11px'}
+                            key={e.id ?? `${e.exchange}-${g.symbol}`}
+                            px={1.5}
+                            py={0.5}
+                            lineHeight={'1.45'}
+                            borderWidth="1px"
+                            borderRadius="base"
+                            letterSpacing={'-0.3px'}
+                          >
+                            <Text>{e.exchange}</Text>
+                            <Text fontSize={'xs'} fontWeight="medium">
+                              {fundingFormat.formatFundingRate(e.fundingRate)}
+                            </Text>
+                            {e.price !== undefined && (
+                              <Text fontSize="xs" color="gray.600">
+                                价格: {fundingFormat.formatPrice(e.price)}
+                              </Text>
+                            )}
+                            <Text color="gray.600">日化: {fundingFormat.formatFundingRate(e.dailyFundingRate)}</Text>
+                            <Text color="gray.600">周期: {e.cycle}h</Text>
+                            <Text color="gray.600">结算: {fundingFormat.formatTime(e.nextFundingTimestamp)}</Text>
+                          </Box>
+                        ))}
+                      </HStack>
+                    </Td>
+                    <Td py={1.5} color={Math.abs(delta) > 0.01 ? 'red.600' : 'gray.700'}>
+                      {(delta * 100).toFixed(4)}%
+                    </Td>
+                    <Td py={1.5}>{fundingFormat.formatTime(nearest)}</Td>
+                  </Tr>
+                )
+              })}
+            </Tbody>
+          )}
         </Table>
       )}
     </Box>

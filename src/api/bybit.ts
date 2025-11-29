@@ -12,11 +12,11 @@ export async function fetchBybitFundingRows(): Promise<FundingRow[]> {
     const data = await get<any>(`/bybit${path}`, { params })
     const list = data?.result?.list ?? []
     console.log('list', list.length)
-    const filtered = (list as any[]).filter(i =>
-      String(i.symbol ?? '')
+    const filtered = (list as any[]).filter(i => {
+      return String(i.symbol ?? '')
         .toUpperCase()
         .endsWith('USDT')
-    )
+    })
     console.log('filtered', filtered.length)
     return filtered.map(item => {
       const rate = Number(item.fundingRate ?? 0)
