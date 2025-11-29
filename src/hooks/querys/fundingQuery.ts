@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { fetchBackpackFundingRows, formatFundingRate, formatPrice, formatTime } from '@/api/backpack'
 import { fetchBybitFundingRows } from '@/api/bybit'
 import type { FundingRow } from '@/types/funding'
@@ -8,7 +8,8 @@ export function useBackpackFundingQuery() {
     queryKey: ['funding', 'backpack'],
     queryFn: fetchBackpackFundingRows,
     refetchInterval: 30_000,
-    staleTime: 20_000
+    staleTime: 20_000,
+    placeholderData: keepPreviousData
   })
 }
 
