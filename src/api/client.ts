@@ -17,9 +17,9 @@ api.interceptors.request.use(config => {
   const key = (import.meta as any).env?.VITE_COINGLASS_KEY as string | undefined
   if (key && (url.startsWith('/coinglass') || url.includes('coinglass'))) {
     if (headers && typeof headers.set === 'function') {
-      headers.set('coinglassSecret', key)
+      headers.set('Cg-Api-Key', key)
     } else {
-      config.headers = { ...(headers || {}), coinglassSecret: key }
+      config.headers = { ...(headers || {}), 'Cg-Api-Key': key }
     }
   }
   return config
