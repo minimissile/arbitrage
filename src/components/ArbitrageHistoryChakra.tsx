@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import type { ArbitrageOpportunity } from '@/types'
-import { TrendingUp, TrendingDown, Clock, DollarSign } from 'lucide-react'
+import { TrendingUp, ArrowUpRight } from 'lucide-react'
 import {
   Box,
   Text,
@@ -10,8 +10,17 @@ import {
   Grid,
   Heading,
   Skeleton,
-  SkeletonText
+  SkeletonText,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Link,
+  Badge
 } from '@chakra-ui/react'
+import { tradeUrlForExchange } from '@/config'
 import { useCoinglassFundingArbQuery, coinglassFormat } from '@/hooks/querys/coinglass'
 
 interface Props {
@@ -169,86 +178,84 @@ function ArbitrageHistoryChakra({ opportunities }: Props) {
         </Box>
       </HStack>
 
-      {sorted.length === 0 ? (
-        <Box py={8} textAlign="center" color="gray.500">
-          <TrendingUp className="mx-auto mb-4 h-12 w-12" />
-          <Text>未发现套利机会</Text>
-          <Text fontSize="sm">可以尝试调整最小价差过滤条件</Text>
-        </Box>
-      ) : (
-        <Box display="grid" gap={3}>
-          {sorted.map(opportunity => (
-            <Box
-              key={opportunity.id}
-              borderWidth="1px"
-              borderColor="gray.200"
-              bg="white"
-              p={4}
-              borderRadius="lg"
-              boxShadow="sm"
-              _hover={{ boxShadow: 'md' }}
-            >
-              <HStack justifyContent="space-between" mb={3} alignItems="center">
-                <HStack spacing={3} alignItems="center">
-                  <Box bg="green.100" borderRadius="md" p={2}>
-                    <TrendingUp className="h-5 w-5" color="#16a34a" />
+      <Box>
+        <Table size="sm" variant="simple">
+          <Thead>
+            <Tr>
+              <Th>排名</Th>
+              <Th>币种</Th>
+              <Th>买入</Th>
+              <Th>卖出</Th>
+              <Th isNumeric>价差（%）</Th>
+              <Th isNumeric>价差（$）</Th>
+              <Th isNumeric>预估利润</Th>
+              <Th>时间</Th>
+              <Th>交易</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {sorted.length === 0 ? (
+              <Tr>
+                <Td colSpan={9}>
+                  <Box py={6} textAlign="center" color="gray.500">
+                    <TrendingUp className="mx-auto mb-3 h-10 w-10" />
+                    <Text>未发现套利机会</Text>
                   </Box>
-                  <Box>
-                    <Heading as="h4" size="sm" color="gray.900">
-                      {opportunity.pair}
-                    </Heading>
-                    <Text fontSize="sm" color="gray.600">
-                      {opportunity.buyExchange} → {opportunity.sellExchange}
-                    </Text>
-                  </Box>
-                </HStack>
-                <Box textAlign="right">
-                  <Text color="green.600" fontSize="lg" fontWeight="bold">
-                    +{opportunity.spreadPercentage.toFixed(2)}%
-                  </Text>
-                  <Text fontSize="sm" color="gray.500">
-                    ${opportunity.spread.toFixed(2)} spread
-                  </Text>
-                </Box>
-              </HStack>
-
-              <Grid templateColumns="repeat(2, 1fr)" gap={4} fontSize="sm">
-                <HStack spacing={2}>
-                  <TrendingDown className="h-4 w-4" color="#16a34a" />
-                  <Text color="gray.600">买入：</Text>
-                  <Text fontWeight="medium">${opportunity.buyPrice.toLocaleString()}</Text>
-                </HStack>
-                <HStack spacing={2}>
-                  <TrendingUp className="h-4 w-4" color="#dc2626" />
-                  <Text color="gray.600">卖出：</Text>
-                  <Text fontWeight="medium">${opportunity.sellPrice.toLocaleString()}</Text>
-                </HStack>
-                <HStack spacing={2}>
-                  <DollarSign className="h-4 w-4" color="#7cba59" />
-                  <Text color="gray.600">预估利润：</Text>
-                  <Text color="green.600" fontWeight="medium">
-                    ${opportunity.estimatedProfit.toFixed(2)}
-                  </Text>
-                </HStack>
-                <HStack spacing={2}>
-                  <Clock className="h-4 w-4" color="#9ca3af" />
-                  <Text color="gray.600">时间：</Text>
-                  <Text fontWeight="medium">{formatTimeAgo(opportunity.timestamp)}</Text>
-                </HStack>
-              </Grid>
-
-              {opportunity.volume && opportunity.volume > 0 && (
-                <Box mt={3} borderTopWidth="1px" borderColor="gray.100" pt={3}>
-                  <HStack justifyContent="space-between" fontSize="sm">
-                    <Text color="gray.600">可用成交量：</Text>
-                    <Text fontWeight="medium">{opportunity.volume.toLocaleString()}</Text>
-                  </HStack>
-                </Box>
-              )}
-            </Box>
-          ))}
-        </Box>
-      )}
+                </Td>
+              </Tr>
+            ) : (
+              sorted.map((opportunity, idx) => {
+                const base = opportunity.pair.split('/')[0]
+                const buyUrl = tradeUrlForExchange(opportunity.buyExchange, base, 'spot')
+                const sellUrl = tradeUrlForExchange(opportunity.sellExchange, base, 'spot')
+                return (
+                  <Tr key={opportunity.id}>
+                    <Td>{idx + 1}</Td>
+                    <Td>
+                      <HStack spacing={2}>
+                        <Badge colorScheme="gray">{base}</Badge>
+                        <Text fontSize="sm" color="gray.600">
+                          {opportunity.pair}
+                        </Text>
+                      </HStack>
+                    </Td>
+                    <Td>
+                      <HStack spacing={2}>
+                        <Badge colorScheme="green">{opportunity.buyExchange}</Badge>
+                        <Text>${opportunity.buyPrice.toLocaleString()}</Text>
+                      </HStack>
+                    </Td>
+                    <Td>
+                      <HStack spacing={2}>
+                        <Badge colorScheme="orange">{opportunity.sellExchange}</Badge>
+                        <Text>${opportunity.sellPrice.toLocaleString()}</Text>
+                      </HStack>
+                    </Td>
+                    <Td isNumeric color="green.600">
+                      {opportunity.spreadPercentage.toFixed(2)}%
+                    </Td>
+                    <Td isNumeric>${opportunity.spread.toFixed(2)}</Td>
+                    <Td isNumeric color="green.700">
+                      ${opportunity.estimatedProfit.toFixed(2)}
+                    </Td>
+                    <Td>{formatTimeAgo(opportunity.timestamp)}</Td>
+                    <Td>
+                      <HStack>
+                        <Link href={buyUrl} isExternal color="brand.600">
+                          <ArrowUpRight className="h-4 w-4" />
+                        </Link>
+                        <Link href={sellUrl} isExternal color="orange.600">
+                          <ArrowUpRight className="h-4 w-4" />
+                        </Link>
+                      </HStack>
+                    </Td>
+                  </Tr>
+                )
+              })
+            )}
+          </Tbody>
+        </Table>
+      </Box>
 
       <Box mt={6} bg="gray.50" p={4} borderRadius="lg">
         <Grid templateColumns={{ base: 'repeat(2, 1fr)', md: 'repeat(4, 1fr)' }} gap={4} textAlign="center">
