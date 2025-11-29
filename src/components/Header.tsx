@@ -1,6 +1,6 @@
 import { Activity, AlertCircle } from 'lucide-react'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
-import { Box, Container, Flex, HStack, Image, Text, Button } from '@chakra-ui/react'
+import { Box, Container, Flex, HStack, Image, Text, Button, Heading } from '@chakra-ui/react'
 import { memo } from 'react'
 
 /**
@@ -16,12 +16,12 @@ function Header() {
     <Box borderBottomWidth="1px" borderColor="gray.200" bg="whiteAlpha.800" backdropFilter="saturate(180%) blur(6px)">
       <Container maxW="full" py={3}>
         <Flex align="center" justify="space-between">
-          <HStack spacing={3}>
+          <HStack as={RouterLink} spacing={3} to="/">
             <Image src={logoUrl} alt="Arbitrage" boxSize={10} />
             <Box>
-              <Text fontSize="xl" fontWeight="bold" color="gray.800">
+              <Heading as={'h1'} fontSize="xl" fontWeight="bold" color="gray.800">
                 套利情报站
-              </Text>
+              </Heading>
               <Text fontSize="xs" color="gray.600">
                 跨交易所实时机会监控与展示
               </Text>
