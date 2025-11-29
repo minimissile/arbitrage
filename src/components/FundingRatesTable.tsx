@@ -13,7 +13,8 @@ import {
   Box,
   Text,
   Skeleton,
-  SkeletonText
+  SkeletonText,
+  Flex
 } from '@chakra-ui/react'
 import { useUnifiedFundingQuery, groupFundingRows, fundingFormat } from '@/hooks/querys'
 
@@ -66,25 +67,36 @@ export default function FundingRatesTable() {
   }, [filtered, selectedExchange, order])
 
   return (
-    <Box p={4}>
-      <Box position="sticky" top={0} zIndex={10} bg="white" pb={3} mb={3} borderBottomWidth="1px" borderColor="gray.200">
-        <HStack gap={3}>
-          <Input placeholder="搜索交易对 (如 BTC_USDC_PERP)" value={search} onChange={e => setSearch(e.target.value)} />
-          <Button onClick={() => refetch()} disabled={isFetching} colorScheme="brand">
-            {isFetching ? '刷新中…' : '手动刷新'}
-          </Button>
-          <Select value={selectedExchange} onChange={e => setSelectedExchange(e.target.value)} maxW="220px">
-            <option value="ALL">全部交易所</option>
-            {exchangeOptions.map(ex => (
-              <option key={ex} value={ex}>
-                {ex}
-              </option>
-            ))}
-          </Select>
-          <Select value={order} onChange={e => setOrder(e.target.value as any)} maxW="160px">
-            <option value="desc">按资金费率高→低</option>
-            <option value="asc">按资金费率低→高</option>
-          </Select>
+    <Box p={4} pt={0}>
+      {/*筛选区*/}
+      <Box position="sticky" top={0} zIndex={10} bg="white" pb={3} pt={3}>
+        <HStack gap={3} justifyContent={'space-between'}>
+          <Flex gap={3}>
+            <Input
+              width={'300px'}
+              placeholder="搜索币种 (如 BTC、ETH...)"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+            <Button onClick={() => refetch()} disabled={isFetching} colorScheme="brand">
+              {isFetching ? '刷新中…' : '手动刷新'}
+            </Button>
+          </Flex>
+
+          <Flex gap={3}>
+            <Select value={selectedExchange} onChange={e => setSelectedExchange(e.target.value)} maxW="220px">
+              <option value="ALL">全部交易所</option>
+              {exchangeOptions.map(ex => (
+                <option key={ex} value={ex}>
+                  {ex}
+                </option>
+              ))}
+            </Select>
+            <Select value={order} onChange={e => setOrder(e.target.value as any)} maxW="160px">
+              <option value="desc">按资金费率高→低</option>
+              <option value="asc">按资金费率低→高</option>
+            </Select>
+          </Flex>
         </HStack>
       </Box>
 
@@ -129,8 +141,8 @@ export default function FundingRatesTable() {
 
       {!isLoading && !isError && (
         <Table>
-          <Thead>
-            <Tr>
+          <Thead position="sticky" top="64px" zIndex={9} bg="white">
+            <Tr bg={'gray.100'} fontWeight={'bold'}>
               <Th>币种</Th>
               <Th>交易所 / 当前资金费率 / 当前价格 / 日化收益 / 结算周期 / 下一次结算时间</Th>
               <Th>最大资金费率差</Th>
