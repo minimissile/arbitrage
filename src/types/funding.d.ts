@@ -1,4 +1,6 @@
 export interface FundingRow {
+  // 唯一标识
+  id?: string
   // 交易所
   exchange: string
   // 币种(BTC、ETH、SOL...)

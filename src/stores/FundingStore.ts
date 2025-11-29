@@ -20,7 +20,14 @@ export const useFundingStore = create<FundingState>(set => ({
     set({ loading: true, error: null })
     try {
       const [bp, by] = await Promise.all([fetchBackpackFundingRows(), fetchBybitFundingRows()])
-      const rows = [...bp, ...by]
+      const rowsRaw = [...bp, ...by]
+      const rows = rowsRaw.map(r => ({
+        ...r,
+        id:
+          globalThis.crypto && (globalThis.crypto as any).randomUUID
+            ? (globalThis.crypto as any).randomUUID()
+            : `${Date.now()}-${Math.random().toString(16).slice(2)}`
+      }))
       const canon = (s: string) => {
         const up = s.toUpperCase()
         // Pattern like BTC_USDC_PERP / ADA_USDC_PERP → take base before first separator
@@ -41,13 +48,20 @@ export const useFundingStore = create<FundingState>(set => ({
       }
       const groups = Array.from(map.entries())
         .map(([symbol, entries]) => {
-          const rates = entries.map(e => e.fundingRate)
-          const delta = Math.max(...rates) - Math.min(...rates)
-          const nearestTs = entries.reduce(
+          const dedup: Record<string, FundingRow> = {}
+          for (const e of entries) {
+            const key = e.exchange
+            const ex = dedup[key]
+            if (!ex || Math.abs(e.fundingRate) > Math.abs(ex.fundingRate)) dedup[key] = e
+          }
+          const uniq = Object.values(dedup)
+          const rates = uniq.map(e => e.fundingRate)
+          const delta = rates.length ? Math.max(...rates) - Math.min(...rates) : 0
+          const nearestTs = uniq.reduce(
             (min, e) => (min === 0 || (e.nextFundingTimestamp && e.nextFundingTimestamp < min) ? e.nextFundingTimestamp : min),
             0
           )
-          return { symbol, entries, delta, nearestTs }
+          return { symbol, entries: uniq, delta, nearestTs }
         })
         .sort((a, b) => Math.abs(b.delta) - Math.abs(a.delta))
       set({ rows, groups, loading: false })

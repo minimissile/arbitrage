@@ -1,16 +1,14 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Button, HStack, Input, Table, Thead, Tbody, Tr, Th, Td, Box, Spinner, Text } from '@chakra-ui/react'
-import { useFundingStore, fundingFormat } from '@/stores/FundingStore'
+import { useMemo, useState } from 'react'
+import { Button, HStack, Input, Select, Table, Thead, Tbody, Tr, Th, Td, Box, Spinner, Text } from '@chakra-ui/react'
+import { useUnifiedFundingQuery, groupFundingRows, fundingFormat } from '@/hooks/querys'
 
 export default function FundingRatesTable() {
   const [search, setSearch] = useState('')
-  const { groups, load, loading, error } = useFundingStore()
-  useEffect(() => {
-    load()
-    const id = setInterval(() => load(), 30000)
-    return () => clearInterval(id)
-  }, [load])
+  const [selectedExchange, setSelectedExchange] = useState<string>('ALL')
+  const [order, setOrder] = useState<'desc' | 'asc'>('desc')
+  const { data, isLoading, isError, refetch, isFetching } = useUnifiedFundingQuery()
 
+  const groups = useMemo(() => groupFundingRows(data ?? []), [data])
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     return (groups ?? []).filter(
@@ -18,24 +16,65 @@ export default function FundingRatesTable() {
     )
   }, [groups, search])
 
+  const exchangeOptions = useMemo(() => {
+    const set = new Set<string>()
+    for (const g of groups) {
+      for (const e of g.entries) set.add(e.exchange)
+    }
+    return Array.from(set).sort()
+  }, [groups])
+
+  const sorted = useMemo(() => {
+    const getRate = (g: (typeof groups)[number]) => {
+      if (selectedExchange === 'ALL') {
+        if (!g.entries.length) return null
+        return Math.max(...g.entries.map(e => e.fundingRate))
+      }
+      const entry = g.entries.find(e => e.exchange.toLowerCase() === selectedExchange.toLowerCase())
+      return entry ? entry.fundingRate : null
+    }
+    const arr = [...filtered]
+    arr.sort((a, b) => {
+      const ra = getRate(a)
+      const rb = getRate(b)
+      if (ra == null && rb == null) return 0
+      if (ra == null) return 1
+      if (rb == null) return -1
+      return order === 'desc' ? rb - ra : ra - rb
+    })
+    return arr
+  }, [filtered, selectedExchange, order])
+
   return (
     <Box p={4}>
       <HStack gap={3} mb={3}>
         <Input placeholder="搜索交易对 (如 BTC_USDC_PERP)" value={search} onChange={e => setSearch(e.target.value)} />
-        <Button onClick={() => load()} disabled={loading} colorScheme="brand">
-          {loading ? '刷新中…' : '手动刷新'}
+        <Button onClick={() => refetch()} disabled={isFetching} colorScheme="brand">
+          {isFetching ? '刷新中…' : '手动刷新'}
         </Button>
+        <Select value={selectedExchange} onChange={e => setSelectedExchange(e.target.value)} maxW="220px">
+          <option value="ALL">全部交易所</option>
+          {exchangeOptions.map(ex => (
+            <option key={ex} value={ex}>
+              {ex}
+            </option>
+          ))}
+        </Select>
+        <Select value={order} onChange={e => setOrder(e.target.value as any)} maxW="160px">
+          <option value="desc">按资金费率高→低</option>
+          <option value="asc">按资金费率低→高</option>
+        </Select>
       </HStack>
 
-      {loading && (
+      {isLoading && (
         <HStack>
           <Spinner />
           <Text>加载中…</Text>
         </HStack>
       )}
-      {error && <Text>加载失败，请稍后重试</Text>}
+      {isError && <Text>加载失败，请稍后重试</Text>}
 
-      {!loading && !error && (
+      {!isLoading && !isError && (
         <Table>
           <Thead>
             <Tr>
@@ -46,7 +85,7 @@ export default function FundingRatesTable() {
             </Tr>
           </Thead>
           <Tbody>
-            {filtered.map(g => {
+            {sorted.map(g => {
               const delta = g.delta
               const nearest = g.nearestTs
               return (
@@ -55,7 +94,7 @@ export default function FundingRatesTable() {
                   <Td>
                     <HStack gap={2} wrap="wrap">
                       {g.entries.map(e => (
-                        <Box key={`${e.exchange}-${g.symbol}`} px={2} py={1} borderWidth="1px" borderRadius="md">
+                        <Box key={e.id ?? `${e.exchange}-${g.symbol}`} px={2} py={1} borderWidth="1px" borderRadius="md">
                           <Text fontSize="xs">{e.exchange}</Text>
                           <Text fontSize="sm" fontWeight="medium">
                             {fundingFormat.formatFundingRate(e.fundingRate)}

@@ -34,6 +34,23 @@ export const theme = extendTheme({
       800: '#3b722c',
       900: '#28501e'
     }
+  },
+  components: {
+    Input: {
+      defaultProps: {
+        focusBorderColor: 'brand.500'
+      }
+    },
+    Select: {
+      defaultProps: {
+        focusBorderColor: 'brand.500'
+      }
+    },
+    Textarea: {
+      defaultProps: {
+        focusBorderColor: 'brand.500'
+      }
+    }
   }
 })
 
