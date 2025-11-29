@@ -62,28 +62,30 @@ export default function FundingRatesTable() {
 
   return (
     <Box p={4}>
-      <HStack gap={3} mb={3}>
-        <Input placeholder="搜索交易对 (如 BTC_USDC_PERP)" value={search} onChange={e => setSearch(e.target.value)} />
-        <Button onClick={() => refetch()} disabled={isFetching} colorScheme="brand">
-          {isFetching ? '刷新中…' : '手动刷新'}
-        </Button>
-        <Select value={selectedExchange} onChange={e => setSelectedExchange(e.target.value)} maxW="220px">
-          <option value="ALL">全部交易所</option>
-          {exchangeOptions.map(ex => (
-            <option key={ex} value={ex}>
-              {ex}
-            </option>
-          ))}
-        </Select>
-        <Select value={order} onChange={e => setOrder(e.target.value as any)} maxW="160px">
-          <option value="desc">按资金费率高→低</option>
-          <option value="asc">按资金费率低→高</option>
-        </Select>
-      </HStack>
+      <Box position="sticky" top={0} zIndex={10} bg="white" pb={3} mb={3} borderBottomWidth="1px" borderColor="gray.200">
+        <HStack gap={3}>
+          <Input placeholder="搜索交易对 (如 BTC_USDC_PERP)" value={search} onChange={e => setSearch(e.target.value)} />
+          <Button onClick={() => refetch()} disabled={isFetching} colorScheme="brand">
+            {isFetching ? '刷新中…' : '手动刷新'}
+          </Button>
+          <Select value={selectedExchange} onChange={e => setSelectedExchange(e.target.value)} maxW="220px">
+            <option value="ALL">全部交易所</option>
+            {exchangeOptions.map(ex => (
+              <option key={ex} value={ex}>
+                {ex}
+              </option>
+            ))}
+          </Select>
+          <Select value={order} onChange={e => setOrder(e.target.value as any)} maxW="160px">
+            <option value="desc">按资金费率高→低</option>
+            <option value="asc">按资金费率低→高</option>
+          </Select>
+        </HStack>
+      </Box>
 
       {isLoading && (
         <Table>
-          <Thead>
+          <Thead position="sticky" top="64px" zIndex={9} bg="white">
             <Tr>
               <Th>币种</Th>
               <Th>交易所 / 当前资金费率 / 当前价格 / 日化收益 / 结算周期 / 下一次结算时间</Th>

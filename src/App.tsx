@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { Header } from './components/Header'
 import { Box, Container } from '@chakra-ui/react'
+import ScrollTopButton from './components/ScrollTopButton'
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <Container maxW="full" py={6}>
         <Outlet />
       </Container>
+      <ScrollTopButton />
     </Box>
   )
 }
