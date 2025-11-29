@@ -122,7 +122,7 @@ docker-compose up -d
 
 ## Usage
 
-### Dashboard Overview
+### DashboardPage Overview
 - **Best Opportunity**: Shows the highest spread percentage currently available
 - **Average Spread**: Average spread across all monitored pairs
 - **Total Opportunities**: Total number of active arbitrage opportunities
@@ -133,7 +133,7 @@ docker-compose up -d
 - Color-coded based on spread percentage
 - Click on any card to see detailed price information
 
-### Funding Rate Chart
+### FundingPage Rate Chart
 - Line chart showing funding rate trends over time
 - Compare funding rates across different exchanges
 - Identify funding rate arbitrage opportunities
@@ -167,7 +167,8 @@ const customExchange: Exchange = {
 ```
 
 ### Trading Pairs
-Modify monitored trading pairs in the Dashboard component:
+
+Modify monitored trading pairs in the DashboardPage component:
 ```typescript
 const symbols = ['BTC/USDT', 'ETH/USDT', 'BNB/USDT', 'SOL/USDT', 'ADA/USDT']
 ```

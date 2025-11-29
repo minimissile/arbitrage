@@ -6,7 +6,7 @@ function App() {
   return (
     <Box minH="100vh" bg="gray.50">
       <Header />
-      <Container maxW="container.lg" py={6}>
+      <Container maxW="full" py={6}>
         <Outlet />
       </Container>
     </Box>

@@ -8,11 +8,11 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        lazy: () => import('@/views/Dashboard').then(m => ({ Component: m.default }))
+        lazy: () => import('@/views/DashboardPage').then(m => ({ Component: m.default }))
       },
       {
         path: 'funding',
-        lazy: () => import('@/views/Funding').then(m => ({ Component: m.default }))
+        lazy: () => import('@/views/FundingPage').then(m => ({ Component: m.default }))
       }
     ]
   }
