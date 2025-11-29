@@ -1,5 +1,20 @@
 import { useMemo, useState } from 'react'
-import { Button, HStack, Input, Select, Table, Thead, Tbody, Tr, Th, Td, Box, Spinner, Text } from '@chakra-ui/react'
+import {
+  Button,
+  HStack,
+  Input,
+  Select,
+  Table,
+  Thead,
+  Tbody,
+  Tr,
+  Th,
+  Td,
+  Box,
+  Text,
+  Skeleton,
+  SkeletonText
+} from '@chakra-ui/react'
 import { useUnifiedFundingQuery, groupFundingRows, fundingFormat } from '@/hooks/querys'
 
 export default function FundingRatesTable() {
@@ -67,10 +82,41 @@ export default function FundingRatesTable() {
       </HStack>
 
       {isLoading && (
-        <HStack>
-          <Spinner />
-          <Text>加载中…</Text>
-        </HStack>
+        <Table>
+          <Thead>
+            <Tr>
+              <Th>币种</Th>
+              <Th>交易所 / 当前资金费率 / 当前价格 / 日化收益 / 结算周期 / 下一次结算时间</Th>
+              <Th>最大资金费率差</Th>
+              <Th>最近结算时间</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Tr key={`loading-${i}`}>
+                <Td>
+                  <Skeleton w="48px" h="16px" borderRadius="md" />
+                </Td>
+                <Td>
+                  <HStack gap={2} wrap="wrap">
+                    {Array.from({ length: 3 }).map((__, j) => (
+                      <Box key={`card-${i}-${j}`} px={2} py={2} borderWidth="1px" borderRadius="md" minW="160px">
+                        <Skeleton w="64px" h="12px" mb={2} />
+                        <SkeletonText noOfLines={3} spacing="2" skeletonHeight="10px" />
+                      </Box>
+                    ))}
+                  </HStack>
+                </Td>
+                <Td>
+                  <Skeleton w="72px" h="16px" />
+                </Td>
+                <Td>
+                  <Skeleton w="100px" h="16px" />
+                </Td>
+              </Tr>
+            ))}
+          </Tbody>
+        </Table>
       )}
       {isError && <Text>加载失败，请稍后重试</Text>}
 

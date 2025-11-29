@@ -7,7 +7,7 @@
  */
 import { create } from 'zustand'
 import type { MarketData, AlertSettings, ArbitrageOpportunity, PriceData, FundingRateData } from '@/types'
-import type { FundingRow } from '@/api/backpack'
+import type { FundingRow } from '@/types/funding'
 
 interface ArbitrageStore {
   marketData: MarketData
