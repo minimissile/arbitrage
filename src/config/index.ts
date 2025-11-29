@@ -7,29 +7,47 @@ export const invitationCode = {
 export const externalLinks = {
   // binance 合约交易链接
   binanceFutures: (symbol: string) => `https://www.binance.com/zh-CN/futures/${symbol}USDT?ref=${invitationCode.binance}`,
-  binanceSPot: (symbol: string) => `https://www.binance.com/zh-CN/trade/${symbol}_USDT?type=spot&ref=${invitationCode.binance}`
+  // binance 现货交易链接
+  binanceSPot: (symbol: string) => `https://www.binance.com/zh-CN/trade/${symbol}_USDT?type=spot&ref=${invitationCode.binance}`,
+  // okx 现货交易链接
+  okxSpot: (symbol: string) => `https://www.okx.com/markets/spot/${symbol.toLowerCase()}-usdt`,
+  // okx 合约交易链接
+  okxFutures: (symbol: string) => `https://www.okx.com/trade-market/swap-${symbol.toLowerCase()}-usdt`,
+  // bybit 现货交易链接
+  bybitSpot: (symbol: string) => `https://www.bybit.com/en/trade/spot/${symbol.toUpperCase()}/USDT`,
+  // bybit 合约交易链接
+  bybitPerp: (symbol: string) => `https://www.bybit.com/en/trade/usdt/${symbol.toUpperCase()}USDT`,
+  // kraken 现货交易链接
+  krakenSpot: (symbol: string) => `https://pro.kraken.com/app/trade/${symbol.toUpperCase()}-USDT`,
+  // mexc 现货交易链接
+  mexcSpot: (symbol: string) => `https://www.mexc.com/exchange/${symbol.toUpperCase()}_USDT`,
+  // mexc 合约交易链接
+  mexcFutures: (symbol: string) => `https://www.mexc.com/futures/${symbol.toUpperCase()}_USDT`,
+  // gate 现货交易链接
+  gateSpot: (symbol: string) => `https://www.gate.io/trade/${symbol.toUpperCase()}_USDT`,
+  // gate 合约交易链接
+  gateFutures: (symbol: string) => `https://www.gate.io/futures/${symbol.toUpperCase()}_USDT`,
+  // whitebit 现货交易链接
+  whitebitSpot: (symbol: string) => `https://whitebit.com/trade/${symbol.toUpperCase()}_USDT`
 }
 
-export const okxSpot = (symbol: string) => `https://www.okx.com/markets/spot/${symbol.toLowerCase()}-usdt`
-export const okxFutures = (symbol: string) => `https://www.okx.com/trade-market/swap-${symbol.toLowerCase()}-usdt`
-export const bybitSpot = (symbol: string) => `https://www.bybit.com/en/trade/spot/${symbol.toUpperCase()}/USDT`
-export const bybitPerp = (symbol: string) => `https://www.bybit.com/en/trade/usdt/${symbol.toUpperCase()}USDT`
-export const krakenSpot = (symbol: string) => `https://pro.kraken.com/app/trade/${symbol.toUpperCase()}-USDT`
-export const mexcSpot = (symbol: string) => `https://www.mexc.com/exchange/${symbol.toUpperCase()}_USDT`
-export const mexcFutures = (symbol: string) => `https://www.mexc.com/futures/${symbol.toUpperCase()}_USDT`
-export const gateSpot = (symbol: string) => `https://www.gate.io/trade/${symbol.toUpperCase()}_USDT`
-export const gateFutures = (symbol: string) => `https://www.gate.io/futures/${symbol.toUpperCase()}_USDT`
-export const whitebitSpot = (symbol: string) => `https://whitebit.com/trade/${symbol.toUpperCase()}_USDT`
-
+/**
+ * 获取交易所交易链接
+ * @param exchange 交易所名称
+ * @param symbol 交易币种
+ * @param type 交易类型 spot/futures
+ */
 export function tradeUrlForExchange(exchange: string, symbol: string, type: 'spot' | 'futures' = 'spot') {
   const ex = exchange.trim().toLowerCase()
   const base = symbol.trim().toUpperCase()
+
   if (ex.includes('binance')) return type === 'spot' ? externalLinks.binanceSPot(base) : externalLinks.binanceFutures(base)
-  if (ex.includes('okx')) return type === 'spot' ? okxSpot(base) : okxFutures(base)
-  if (ex.includes('bybit')) return type === 'spot' ? bybitSpot(base) : bybitPerp(base)
-  if (ex.includes('kraken')) return krakenSpot(base)
-  if (ex.includes('mexc')) return type === 'spot' ? mexcSpot(base) : mexcFutures(base)
-  if (ex.includes('gate')) return type === 'spot' ? gateSpot(base) : gateFutures(base)
-  if (ex.includes('whitebit')) return whitebitSpot(base)
+  if (ex.includes('okx')) return type === 'spot' ? externalLinks.okxSpot(base) : externalLinks.okxFutures(base)
+  if (ex.includes('bybit')) return type === 'spot' ? externalLinks.bybitSpot(base) : externalLinks.bybitPerp(base)
+  if (ex.includes('kraken')) return externalLinks.krakenSpot(base)
+  if (ex.includes('mexc')) return type === 'spot' ? externalLinks.mexcSpot(base) : externalLinks.mexcFutures(base)
+  if (ex.includes('gate')) return type === 'spot' ? externalLinks.gateSpot(base) : externalLinks.gateFutures(base)
+  if (ex.includes('whitebit')) return externalLinks.whitebitSpot(base)
+
   return externalLinks.binanceSPot(base)
 }

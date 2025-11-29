@@ -6,12 +6,20 @@ interface Props {
   onChange: (page: number) => void
 }
 
+/**
+ * 分页组件
+ * @param page 当前页数
+ * @param totalPages 总页数
+ * @param onChange 页数变更回调函数
+ * @constructor
+ */
 export default function Pagination({ page, totalPages, onChange }: Props) {
   const safeTotal = Math.max(1, totalPages)
+
   return (
     <HStack mt={3} gap={2}>
       <Box fontSize="sm" color="gray.600">
-        第 {page} 页 / 共 {safeTotal} 页
+        第 {page} 页 / 共 {safeTotal} 页å
       </Box>
       <HStack>
         <Box

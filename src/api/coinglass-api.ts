@@ -7,6 +7,9 @@ function auth(key: string) {
   secret = key
 }
 
+/**
+ * 资金费率可套利列表
+ */
 async function frArbitrage(params?: Record<string, string | number>) {
   const config: AxiosRequestConfig = {}
   if (secret) config.headers = { coinglassSecret: secret }

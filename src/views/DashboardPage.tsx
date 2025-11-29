@@ -36,7 +36,7 @@ export default function DashboardPage() {
               机会列表
             </Heading>
             <Box borderWidth="1px" borderColor="gray.200" bg="white" p={4} borderRadius="xl" boxShadow="sm">
-              <ArbitrageOpportunities opportunities={marketData.arbitrageOpportunities} />
+              <ArbitrageOpportunities />
             </Box>
           </Box>
         </GridItem>
