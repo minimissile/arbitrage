@@ -1,9 +1,13 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { formatFundingRate, formatPrice, formatTime } from '@/utils'
 import { fetchBackpackFundingRows } from '@/api/backpack'
 import { fetchBybitFundingRows } from '@/api/bybit'
 import type { FundingRow } from '@/types/funding'
-import { formatFundingRate, formatPrice, formatTime } from '@/utils'
+import { v4 as uuidv4 } from 'uuid'
 
+/**
+ * backpack 资金费率查询
+ */
 export function useBackpackFundingQuery() {
   return useQuery<FundingRow[]>({
     queryKey: ['funding', 'backpack'],
@@ -14,6 +18,9 @@ export function useBackpackFundingQuery() {
   })
 }
 
+/**
+ * bybit 资金费率查询
+ */
 export function useBybitFundingQuery() {
   return useQuery<FundingRow[]>({
     queryKey: ['funding', 'bybit'],
@@ -23,25 +30,25 @@ export function useBybitFundingQuery() {
   })
 }
 
+/**
+ * 统一资金费率查询
+ */
 export function useUnifiedFundingQuery() {
   return useQuery<FundingRow[]>({
     queryKey: ['funding', 'unified'],
+    refetchInterval: 60_000,
+    placeholderData: keepPreviousData,
     queryFn: async () => {
       const [bp, by] = await Promise.all([fetchBackpackFundingRows(), fetchBybitFundingRows()])
       const rowsRaw = [...(bp ?? []), ...(by ?? [])]
-      return rowsRaw.map(r => ({
-        ...r,
-        id:
-          globalThis.crypto && (globalThis.crypto as any).randomUUID
-            ? (globalThis.crypto as any).randomUUID()
-            : `${Date.now()}-${Math.random().toString(16).slice(2)}`
-      }))
-    },
-    refetchInterval: 30_000,
-    staleTime: 20_000
+      return rowsRaw.map(r => ({ id: uuidv4(), ...r }))
+    }
   })
 }
 
+/**
+ * 资金费率分组
+ */
 export function groupFundingRows(rows: FundingRow[]) {
   const canon = (s: string) => {
     const up = s.toUpperCase()
@@ -52,12 +59,14 @@ export function groupFundingRows(rows: FundingRow[]) {
     if (quote) return up.slice(0, up.length - quote.length)
     return up.replace(/[_-]?PERP$/, '')
   }
+
   const map = new Map<string, FundingRow[]>()
   for (const r of rows) {
     const key = canon(r.symbol)
     if (!map.has(key)) map.set(key, [])
     map.get(key)!.push(r)
   }
+
   return Array.from(map.entries())
     .map(([symbol, entries]) => {
       const dedup: Record<string, FundingRow> = {}

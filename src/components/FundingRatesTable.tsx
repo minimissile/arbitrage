@@ -28,6 +28,7 @@ export default function FundingRatesTable() {
   const { data, isLoading, isError, refetch, isFetching } = useUnifiedFundingQuery()
 
   const groups = useMemo(() => groupFundingRows(data ?? []), [data])
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
     return (groups ?? []).filter(
