@@ -27,6 +27,7 @@ export default function FundingRatesTable() {
   const [search, setSearch] = useState('')
   const [selectedExchange, setSelectedExchange] = useState<string>('ALL')
   const [order, setOrder] = useState<'desc' | 'asc'>('desc')
+  const [sortByDelta, setSortByDelta] = useState(true)
   const { data, isLoading, isError, refetch, isFetching } = useUnifiedFundingQuery()
 
   const groups = useMemo(() => groupFundingRows(data ?? []), [data])
@@ -47,25 +48,27 @@ export default function FundingRatesTable() {
   }, [groups])
 
   const sorted = useMemo(() => {
+    const arr = [...filtered]
+    if (sortByDelta) {
+      arr.sort((a, b) => (order === 'desc' ? b.delta - a.delta : a.delta - b.delta))
+      return arr
+    }
     const getRate = (g: (typeof groups)[number]) => {
       if (selectedExchange === 'ALL') {
-        if (!g.entries.length) return null
+        if (!g.entries.length) return Number.NEGATIVE_INFINITY
         return Math.max(...g.entries.map(e => e.fundingRate))
       }
       const entry = g.entries.find(e => e.exchange.toLowerCase() === selectedExchange.toLowerCase())
-      return entry ? entry.fundingRate : null
+      if (!entry) return order === 'desc' ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY
+      return entry.fundingRate
     }
-    const arr = [...filtered]
     arr.sort((a, b) => {
       const ra = getRate(a)
       const rb = getRate(b)
-      if (ra == null && rb == null) return 0
-      if (ra == null) return 1
-      if (rb == null) return -1
       return order === 'desc' ? rb - ra : ra - rb
     })
     return arr
-  }, [filtered, selectedExchange, order])
+  }, [filtered, selectedExchange, order, sortByDelta])
 
   return (
     <Box p={4} pt={0}>
@@ -85,7 +88,15 @@ export default function FundingRatesTable() {
           </Flex>
 
           <Flex gap={3}>
-            <Select value={selectedExchange} onChange={e => setSelectedExchange(e.target.value)} maxW="220px">
+            <Select
+              value={selectedExchange}
+              onChange={e => {
+                const v = e.target.value
+                setSelectedExchange(v)
+                setSortByDelta(v === 'ALL')
+              }}
+              maxW="220px"
+            >
               <option value="ALL">全部交易所</option>
               {exchangeOptions.map(ex => (
                 <option key={ex} value={ex}>
@@ -95,7 +106,10 @@ export default function FundingRatesTable() {
             </Select>
 
             <Button
-              onClick={() => setOrder(o => (o === 'desc' ? 'asc' : 'desc'))}
+              onClick={() => {
+                setSortByDelta(false)
+                setOrder(o => (o === 'desc' ? 'asc' : 'desc'))
+              }}
               variant={'outline'}
               flexShrink={0}
               gap={1}
@@ -117,9 +131,23 @@ export default function FundingRatesTable() {
               <Th>币种</Th>
               <Th>交易所 / 当前资金费率 / 当前价格 / 日化收益 / 结算周期 / 下一次结算时间</Th>
               <Th>
-                <Flex align={'center'}>
+                <Flex
+                  align={'center'}
+                  cursor={'pointer'}
+                  onClick={() => {
+                    setSortByDelta(true)
+                    setOrder(o => (o === 'desc' ? 'asc' : 'desc'))
+                  }}
+                  gap={1}
+                >
                   最大资金费率差
-                  <ArrowDown size={13} />
+                  <ArrowDown
+                    size={13}
+                    style={{
+                      transition: 'transform 0.25s ease',
+                      transform: order === 'desc' ? 'rotate(0deg)' : 'rotate(180deg)'
+                    }}
+                  />
                 </Flex>
               </Th>
               <Th>最近结算时间</Th>
@@ -159,7 +187,9 @@ export default function FundingRatesTable() {
                 const nearest = g.nearestTs
                 return (
                   <Tr key={g.symbol} px={1}>
-                    <Td py={1.5}>{g.symbol}</Td>
+                    <Td py={1.5} fontWeight={'medium'}>
+                      {g.symbol}
+                    </Td>
                     <Td py={1.5}>
                       <HStack gap={2} wrap="wrap">
                         {/*各交易所资金费率数据*/}
