@@ -86,6 +86,7 @@ VITE_OKX_API_KEY=your_okx_api_key
 VITE_OKX_SECRET_KEY=your_okx_secret_key
 VITE_BYBIT_API_KEY=your_bybit_api_key
 VITE_BYBIT_SECRET_KEY=your_bybit_secret_key
+VITE_COINGLASS_KEY=your_coinglass_open_api_key
 ```
 
 ### 生产构建

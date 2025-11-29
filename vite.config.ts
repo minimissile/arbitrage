@@ -53,6 +53,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: true,
         rewrite: p => p.replace(/^\/bybit/, '')
+      },
+      '/coinglass': {
+        target: 'https://open-api.coinglass.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/coinglass/, '')
       }
     }
   }
