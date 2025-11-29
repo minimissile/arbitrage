@@ -10,8 +10,8 @@ https://traearbitragecske.vercel.app
 
 # 各交易所的资金费率接口：
 
-- Bybit: `https://www.bybit.com/x-api/contract/v5/public/support/trading-param?category=LinearPerpetual`
-- Backpack: `https://api.backpack.exchange/v1/markets/funding-rates`
+- Bybit（线性永续）: `https://api.bybit.com/v5/market/tickers?category=linear`
+- Backpack（资金费率）: `https://api.backpack.exchange/api/v1/markPrices`
 
 
 A real-time cryptocurrency arbitrage monitoring application built with React, TypeScript, and modern web technologies.
@@ -208,4 +208,3 @@ const symbols = ['BTC/USDT', 'ETH/USDT', 'BNB/USDT', 'SOL/USDT', 'ADA/USDT']
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-

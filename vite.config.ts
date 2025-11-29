@@ -39,7 +39,7 @@ export default defineConfig({
     }
   },
   server: {
-    port: 3000,
+    port: 5566,
     host: '0.0.0.0',
     proxy: {
       '/backpack': {
@@ -48,10 +48,11 @@ export default defineConfig({
         secure: false,
         rewrite: path => path.replace(/^\/backpack/, '')
       },
-      '/api/v1': {
-        target: 'https://api.backpack.exchange',
+      '/bybit': {
+        target: 'https://api.bybit.com',
         changeOrigin: true,
-        secure: false
+        secure: true,
+        rewrite: p => p.replace(/^\/bybit/, '')
       }
     }
   }

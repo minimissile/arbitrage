@@ -7,6 +7,7 @@
  */
 import { create } from 'zustand'
 import type { MarketData, AlertSettings, ArbitrageOpportunity, PriceData, FundingRateData } from '@/types'
+import type { FundingRow } from '@/api/backpack'
 
 interface ArbitrageStore {
   marketData: MarketData
@@ -14,6 +15,8 @@ interface ArbitrageStore {
   error: string | null
   alertSettings: AlertSettings
   selectedTimeframe: string
+  fundingRows: FundingRow[]
+  fundingComparisons: { symbol: string; entries: FundingRow[] }[]
 
   setMarketData: (data: Partial<MarketData>) => void
   setLoading: (loading: boolean) => void
@@ -23,6 +26,7 @@ interface ArbitrageStore {
   addPriceData: (data: PriceData) => void
   addArbitrageOpportunity: (opportunity: ArbitrageOpportunity) => void
   addFundingRateData: (data: FundingRateData) => void
+  setFundingRows: (rows: FundingRow[]) => void
 }
 
 export const useArbitrageStore = create<ArbitrageStore>(set => ({
@@ -42,6 +46,8 @@ export const useArbitrageStore = create<ArbitrageStore>(set => ({
     emailEnabled: false
   },
   selectedTimeframe: '1h',
+  fundingRows: [],
+  fundingComparisons: [],
 
   setMarketData: data =>
     set(state => ({
@@ -86,5 +92,27 @@ export const useArbitrageStore = create<ArbitrageStore>(set => ({
         // 资金费率数据保留最近 100 条
         fundingRates: [...state.marketData.fundingRates, data].slice(-100)
       }
-    }))
+    })),
+
+  setFundingRows: rows =>
+    set(() => {
+      const canon = (s: string) => {
+        const up = s.toUpperCase()
+        if (up.includes('_')) {
+          const parts = up.split('_')
+          const base = parts[0]
+          const quote = parts[1] || ''
+          return `${base}${quote}`.replace('PERP', '')
+        }
+        return up.replace('PERP', '')
+      }
+      const map = new Map<string, FundingRow[]>()
+      for (const r of rows) {
+        const key = canon(r.symbol)
+        if (!map.has(key)) map.set(key, [])
+        map.get(key)!.push(r)
+      }
+      const grouped = Array.from(map.entries()).map(([symbol, entries]) => ({ symbol, entries }))
+      return { fundingRows: rows, fundingComparisons: grouped }
+    })
 }))
