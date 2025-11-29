@@ -1,7 +1,8 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query'
-import { fetchBackpackFundingRows, formatFundingRate, formatPrice, formatTime } from '@/api/backpack'
+import { fetchBackpackFundingRows } from '@/api/backpack'
 import { fetchBybitFundingRows } from '@/api/bybit'
 import type { FundingRow } from '@/types/funding'
+import { formatFundingRate, formatPrice, formatTime } from '@/utils'
 
 export function useBackpackFundingQuery() {
   return useQuery<FundingRow[]>({
