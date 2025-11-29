@@ -7,17 +7,21 @@ import type { FundingRow } from '@/types/funding'
 export async function fetchBybitFundingRows(): Promise<FundingRow[]> {
   const path = '/v5/market/tickers'
   const params = { category: 'linear' }
+  // 最低成交额
+  const minTurnover24h = 100000
 
   try {
     const data = await get<any>(`/bybit${path}`, { params })
     const list = data?.result?.list ?? []
-    console.log('list', list.length)
+    // 保留USDT结尾的合约以及成交额大于100000的合约
     const filtered = (list as any[]).filter(i => {
-      return String(i.symbol ?? '')
+      const symOk = String(i.symbol ?? '')
         .toUpperCase()
         .endsWith('USDT')
+      const turnover = Number(i.turnover24h ?? 0)
+      return symOk && turnover >= minTurnover24h
     })
-    console.log('filtered', filtered.length)
+
     return filtered.map(item => {
       const rate = Number(item.fundingRate ?? 0)
       const price = Number(item.lastPrice ?? item.markPrice ?? item.indexPrice ?? 0)

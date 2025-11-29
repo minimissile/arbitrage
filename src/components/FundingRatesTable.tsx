@@ -116,7 +116,12 @@ export default function FundingRatesTable() {
             <Tr bg={'gray.100'} fontWeight={'bold'}>
               <Th>币种</Th>
               <Th>交易所 / 当前资金费率 / 当前价格 / 日化收益 / 结算周期 / 下一次结算时间</Th>
-              <Th>最大资金费率差</Th>
+              <Th>
+                <Flex align={'center'}>
+                  最大资金费率差
+                  <ArrowDown size={13} />
+                </Flex>
+              </Th>
               <Th>最近结算时间</Th>
             </Tr>
           </Thead>
