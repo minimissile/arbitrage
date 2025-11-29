@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useArbitrageStore } from '@/stores/arbitrageStore'
 import { ArbitrageOverview } from '@/components/ArbitrageOverview'
-import ArbitrageHistoryChakra from '@/components/ArbitrageHistoryChakra'
+import ArbitrageOpportunities from '@/components/ArbitrageOpportunities.tsx'
 import { Box, Heading, Text, Grid, GridItem } from '@chakra-ui/react'
 
 /**
@@ -36,7 +36,7 @@ export default function DashboardPage() {
               机会列表
             </Heading>
             <Box borderWidth="1px" borderColor="gray.200" bg="white" p={4} borderRadius="xl" boxShadow="sm">
-              <ArbitrageHistoryChakra opportunities={marketData.arbitrageOpportunities} />
+              <ArbitrageOpportunities opportunities={marketData.arbitrageOpportunities} />
             </Box>
           </Box>
         </GridItem>
