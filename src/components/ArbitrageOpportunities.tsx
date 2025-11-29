@@ -5,7 +5,6 @@ import {
   HStack,
   Heading,
   Skeleton,
-  SkeletonText,
   Input,
   Select,
   Button,
