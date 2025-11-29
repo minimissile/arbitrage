@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import { IconButton, Tooltip } from '@chakra-ui/react'
 import { ArrowUp } from 'lucide-react'
 
+/**
+ * 回到顶部按钮
+ * @constructor
+ */
 export default function ScrollTopButton() {
   const [visible, setVisible] = useState(false)
 
