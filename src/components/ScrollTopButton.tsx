@@ -22,7 +22,7 @@ export default function ScrollTopButton() {
     <Tooltip label="回到顶部" placement="left">
       <IconButton
         aria-label="回到顶部"
-        icon={<ArrowUp size={18} />}
+        icon={<ArrowUp size={20} />}
         colorScheme="brand"
         position="fixed"
         bottom={6}

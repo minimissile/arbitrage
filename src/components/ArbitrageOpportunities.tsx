@@ -16,9 +16,10 @@ import {
   Td,
   Flex
 } from '@chakra-ui/react'
-import { useCoinglassFundingArbQuery, coinglassFormat } from '@/hooks/querys/coinglass'
+import { coinglassFormat, useCoinGlassFundingArbQuery } from '@/hooks/querys/coinglass'
 import Pagination from '@/components/Pagination'
 import { ArrowDown, ArrowUp, ExternalLink } from 'lucide-react'
+import { tradeUrlForExchange } from '@/config'
 
 /**
  * 套利机会列表
@@ -26,16 +27,24 @@ import { ArrowDown, ArrowUp, ExternalLink } from 'lucide-react'
  */
 function ArbitrageOpportunities() {
   const [arbPage, setArbPage] = useState(1)
-  const [arbPageSize] = useState(20)
-  const { data: frPage, isLoading: frLoading, isError: frError } = useCoinglassFundingArbQuery(arbPage, arbPageSize, 10000)
+  const [arbPageSize] = useState(10)
+  const { data: frPage, isLoading: frLoading, isError: frError } = useCoinGlassFundingArbQuery(arbPage, arbPageSize, 10000)
   const frItems = frPage?.items ?? []
   const frTotal = frPage?.total ?? 0
   const frTotalPages = Math.max(1, Math.ceil(frTotal / arbPageSize))
+
+  console.log('frPage', frPage)
 
   const [search, setSearch] = useState('')
   const [selectedExchange, setSelectedExchange] = useState<string>('ALL')
   const [order, setOrder] = useState<'desc' | 'asc'>('desc')
   const [minApr, setMinApr] = useState<string>('')
+
+  const formatUSDCompact = (v: number) => {
+    const n = Number(v)
+    if (!isFinite(n) || n <= 0) return '--'
+    return `$${(n / 10000).toFixed(2)}万`
+  }
 
   const exchangeOptions = useMemo(() => {
     const set = new Set<string>()
@@ -159,7 +168,7 @@ function ArbitrageOpportunities() {
                 <Th>价差率</Th>
                 <Th>持仓</Th>
                 <Th>距离结算</Th>
-                <Th>交易</Th>
+                <Th textAlign={'center'}>交易</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -171,15 +180,15 @@ function ArbitrageOpportunities() {
                   <Td py={1.5} fontWeight="medium">
                     {item.symbol}
                   </Td>
-                  <Td py={1.5}>
+                  <Td py={1.5} lineHeight={1.25}>
                     <Text fontSize="xs" fontWeight="semibold" color="green.600">
-                      做多 {item.symbol}/USDT @ {item.buy.exchange}
+                      做多 {item.symbol} @ {item.buy.exchange}
                     </Text>
                     <Text fontSize="xs" color="gray.600">
                       资金费率 {coinglassFormat.formatFundingRate((item.buy.funding_rate ?? 0) / 100)}
                     </Text>
                     <Text fontSize="xs" fontWeight="semibold" color="red.600" mt={1}>
-                      做空 {item.symbol}/USDT @ {item.sell.exchange}
+                      做空 {item.symbol} @ {item.sell.exchange}
                     </Text>
                     <Text fontSize="xs" color="gray.600">
                       资金费率 {coinglassFormat.formatFundingRate((item.sell.funding_rate ?? 0) / 100)}
@@ -192,18 +201,33 @@ function ArbitrageOpportunities() {
                     {coinglassFormat.formatFundingRate((item.funding ?? 0) / 100)}
                   </Td>
                   <Td py={1.5} color="gray.700">
-                    --
+                    {coinglassFormat.formatFundingRate((item.spread ?? 0) / 100)}
                   </Td>
-                  <Td py={1.5} color="gray.700">
-                    --
+                  <Td py={1.5} fontSize={'sm'}>
+                    <Text>{formatUSDCompact(item.buy?.open_interest_usd ?? 0)}</Text>
+                    <Text>{formatUSDCompact(item.sell?.open_interest_usd ?? 0)}</Text>
                   </Td>
                   <Td py={1.5}>{coinglassFormat.formatTime(item.next_funding_time)}</Td>
-                  <Td py={1.5}>
-                    <HStack gap={2}>
-                      <Button size="xs" variant="ghost" rightIcon={<ExternalLink size={14} />}>
+                  <Td py={1.5} textAlign={'center'}>
+                    <HStack gap={0} w={'full'} justifyContent={'center'}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        rightIcon={<ExternalLink size={14} />}
+                        onClick={() => {
+                          window.open(tradeUrlForExchange(item.sell.exchange, item.symbol, 'futures'), '_blank')
+                        }}
+                      >
                         多
                       </Button>
-                      <Button size="xs" variant="ghost" rightIcon={<ExternalLink size={14} />}>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        rightIcon={<ExternalLink size={14} />}
+                        onClick={() => {
+                          window.open(tradeUrlForExchange(item.sell.exchange, item.symbol, 'futures'), '_blank')
+                        }}
+                      >
                         空
                       </Button>
                     </HStack>
@@ -214,7 +238,7 @@ function ArbitrageOpportunities() {
           </Table>
         )}
 
-        <Pagination page={arbPage} totalPages={frTotalPages} onChange={setArbPage} />
+        <Pagination mt={3} page={arbPage} totalPages={frTotalPages} onChange={setArbPage} />
       </Box>
     </Box>
   )

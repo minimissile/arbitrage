@@ -1,4 +1,3 @@
-import { Activity, AlertCircle } from 'lucide-react'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { Box, Container, Flex, HStack, Image, Text, Button, Heading } from '@chakra-ui/react'
 import { memo } from 'react'
@@ -29,14 +28,6 @@ function Header() {
           </HStack>
 
           <HStack spacing={5}>
-            <HStack spacing={2} fontSize="sm" color="gray.600">
-              <Activity className="h-4 w-4" color="#16a34a" />
-              <Text>实时监控</Text>
-            </HStack>
-            <HStack spacing={2} fontSize="sm" color="gray.600">
-              <AlertCircle className="h-4 w-4" color="#f59e0b" />
-              <Text>告警开启</Text>
-            </HStack>
             <HStack spacing={3} ml={4}>
               <Button
                 as={RouterLink}

@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useArbitrageStore } from '@/stores/arbitrageStore'
 import { ArbitrageOverview } from '@/components/ArbitrageOverview'
 import ArbitrageOpportunities from '@/components/ArbitrageOpportunities.tsx'
@@ -10,7 +9,6 @@ import { Box, Heading, Text, Grid, GridItem } from '@chakra-ui/react'
  */
 export default function DashboardPage() {
   const { marketData } = useArbitrageStore()
-  const [monitoring, setMonitoring] = useState(true)
 
   return (
     <Box display="grid" gap={6}>
@@ -23,11 +21,7 @@ export default function DashboardPage() {
         </Text>
       </Box>
 
-      <ArbitrageOverview
-        opportunities={marketData.arbitrageOpportunities}
-        isMonitoring={monitoring}
-        onToggleMonitoring={() => setMonitoring(m => !m)}
-      />
+      <ArbitrageOverview opportunities={marketData.arbitrageOpportunities} />
 
       <Grid templateColumns={{ base: '1fr', lg: '1fr' }} gap={6}>
         <GridItem>

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { get } from '@/api/client'
 import { fundingFormat } from '@/hooks/querys'
 
-export interface CoinglassArb {
+export interface CoinGlassArb {
   symbol: string
   buy: {
     exchange: string
@@ -23,20 +23,26 @@ export interface CoinglassArb {
   next_funding_time: number
 }
 
-export interface CoinglassArbPage {
-  items: CoinglassArb[]
+export interface CoinGlassArbPage {
+  items: CoinGlassArb[]
   total: number
 }
 
-export function useCoinglassFundingArbQuery(page = 1, pageSize = 12, usd = 10000) {
-  return useQuery<CoinglassArbPage>({
-    queryKey: ['coinglass', 'fr-arbitrage', page, pageSize, usd],
+/**
+ * 获取CoinGlass资金费率套利
+ * @param page 页码
+ * @param pageSize 每页条数
+ * @param usd USD金额
+ */
+export function useCoinGlassFundingArbQuery(page = 1, pageSize = 12, usd = 10000) {
+  return useQuery<CoinGlassArbPage>({
+    queryKey: ['coinGlass', 'fr-arbitrage', page, pageSize, usd],
     queryFn: async () => {
       const res = await get<{ code: string; msg: string; data: any[] }>('/coinglass/api/futures/funding-rate/arbitrage', {
         params: { usd: String(usd) }
       })
       const raw = res?.data ?? []
-      const mapped: CoinglassArb[] = (raw as any[]).map(item => ({
+      const mapped: CoinGlassArb[] = (raw as any[]).map(item => ({
         symbol: String(item.symbol ?? ''),
         buy: {
           exchange: String(item.buy?.exchange ?? ''),

@@ -1,22 +1,18 @@
 import { TrendingUp, DollarSign, AlertTriangle, Clock } from 'lucide-react'
 import { useEffect, useMemo, useState } from 'react'
-import { Box, Grid, GridItem, Text, Heading, Button, Flex } from '@chakra-ui/react'
+import { Box, Grid, Text, Heading, Flex } from '@chakra-ui/react'
 import type { ArbitrageOpportunity } from '@/types'
 
 interface ArbitrageOverviewProps {
   opportunities: ArbitrageOpportunity[]
-  isMonitoring: boolean
-  onToggleMonitoring: () => void
 }
 
 /**
  * 套利概览卡片：汇总当前最佳机会、平均价差、总机会数与最近机会
  * @param opportunities 套利机会数组
- * @param isMonitoring 是否正在监控
- * @param onToggleMonitoring 切换监控状态
  * @constructor
  */
-export function ArbitrageOverview({ opportunities, isMonitoring, onToggleMonitoring }: ArbitrageOverviewProps) {
+export function ArbitrageOverview({ opportunities }: ArbitrageOverviewProps) {
   // 计算关键指标：最佳机会、平均价差、总机会与近 5 分钟机会数
   const bestOpportunity = opportunities[0]
   const averageSpread =
@@ -112,24 +108,6 @@ export function ArbitrageOverview({ opportunities, isMonitoring, onToggleMonitor
           </Box>
         </Flex>
       </Box>
-
-      <GridItem colSpan={{ base: 1, lg: 4 }}>
-        <Box borderWidth="1px" borderColor="gray.200" bg="white" borderRadius="lg" p={4} boxShadow="sm">
-          <Flex align="center" justify="space-between">
-            <Box>
-              <Heading size="md" color="gray.900">
-                监控控制
-              </Heading>
-              <Text fontSize="sm" color="gray.600">
-                {isMonitoring ? '实时监控已开启' : '监控已暂停'}
-              </Text>
-            </Box>
-            <Button onClick={onToggleMonitoring} colorScheme={isMonitoring ? 'gray' : 'brand'}>
-              {isMonitoring ? '暂停监控' : '开始监控'}
-            </Button>
-          </Flex>
-        </Box>
-      </GridItem>
     </Grid>
   )
 }
