@@ -1,6 +1,6 @@
 // 套利概览卡片：汇总当前最佳机会、平均价差、总机会数与最近机会
 import { TrendingUp, DollarSign, AlertTriangle, Clock } from 'lucide-react'
-import { Box, Grid, GridItem, Text, Heading, Button, HStack } from '@chakra-ui/react'
+import { Box, Grid, GridItem, Text, Heading, Button, Flex } from '@chakra-ui/react'
 import type { ArbitrageOpportunity } from '@/types'
 
 interface ArbitrageOverviewProps {

@@ -1,15 +1,19 @@
 import { createBrowserRouter } from 'react-router-dom'
 import App from '@/App'
-import Dashboard from '@/views/Dashboard'
-import Funding from '@/views/Funding'
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
-      { index: true, element: <Dashboard /> },
-      { path: 'funding', element: <Funding /> }
+      {
+        index: true,
+        lazy: () => import('@/views/Dashboard').then(m => ({ Component: m.default }))
+      },
+      {
+        path: 'funding',
+        lazy: () => import('@/views/Funding').then(m => ({ Component: m.default }))
+      }
     ]
   }
 ])

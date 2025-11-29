@@ -22,6 +22,24 @@ export default defineConfig({
       deleteOriginFile: false
     })
   ],
+  build: {
+    chunkSizeWarningLimit: 1024,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('@chakra-ui')) return 'chakra'
+            if (id.includes('react')) return 'react-vendor'
+            if (id.includes('@tanstack')) return 'tanstack'
+            if (id.includes('recharts')) return 'recharts'
+            if (id.includes('lucide')) return 'icons'
+            if (id.includes('axios')) return 'axios'
+            return 'vendor'
+          }
+        }
+      }
+    }
+  },
   server: {
     port: 3000,
     host: '0.0.0.0',
