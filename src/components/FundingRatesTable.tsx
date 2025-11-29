@@ -17,6 +17,10 @@ import {
 } from '@chakra-ui/react'
 import { useUnifiedFundingQuery, groupFundingRows, fundingFormat } from '@/hooks/querys'
 
+/**
+ * 资金费率表格
+ * @constructor
+ */
 export default function FundingRatesTable() {
   const [search, setSearch] = useState('')
   const [selectedExchange, setSelectedExchange] = useState<string>('ALL')

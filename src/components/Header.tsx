@@ -1,20 +1,25 @@
-// 头部导航栏：展示项目标题与运行状态（监控/告警）
 import { Activity, AlertCircle } from 'lucide-react'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import { Box, Container, Flex, HStack, Image, Text, Button } from '@chakra-ui/react'
+import { memo } from 'react'
 
-export function Header() {
+/**
+ * 头部导航栏
+ * @constructor
+ */
+function Header() {
   const location = useLocation()
   const isFunding = location.pathname.startsWith('/funding')
   const logoUrl = new URL('../assets/logo.svg', import.meta.url).href
+
   return (
     <Box borderBottomWidth="1px" borderColor="gray.200" bg="whiteAlpha.800" backdropFilter="saturate(180%) blur(6px)">
-      <Container maxW="full" py={4}>
+      <Container maxW="full" py={3}>
         <Flex align="center" justify="space-between">
           <HStack spacing={3}>
-            <Image src={logoUrl} alt="Arbitrage" boxSize={9} />
+            <Image src={logoUrl} alt="Arbitrage" boxSize={10} />
             <Box>
-              <Text fontSize="xl" fontWeight="bold" color="gray.900">
+              <Text fontSize="xl" fontWeight="bold" color="gray.800">
                 套利情报站
               </Text>
               <Text fontSize="xs" color="gray.600">
@@ -23,7 +28,7 @@ export function Header() {
             </Box>
           </HStack>
 
-          <HStack spacing={4}>
+          <HStack spacing={5}>
             <HStack spacing={2} fontSize="sm" color="gray.600">
               <Activity className="h-4 w-4" color="#16a34a" />
               <Text>实时监控</Text>
@@ -32,11 +37,11 @@ export function Header() {
               <AlertCircle className="h-4 w-4" color="#f59e0b" />
               <Text>告警开启</Text>
             </HStack>
-            <HStack spacing={2} ml={4}>
+            <HStack spacing={3} ml={4}>
               <Button
                 as={RouterLink}
                 to="/"
-                colorScheme={!isFunding ? 'brand' : undefined}
+                colorScheme={!isFunding ? 'primary' : undefined}
                 variant={!isFunding ? 'solid' : 'ghost'}
               >
                 仪表盘
@@ -44,7 +49,7 @@ export function Header() {
               <Button
                 as={RouterLink}
                 to="/funding"
-                colorScheme={isFunding ? 'brand' : undefined}
+                colorScheme={isFunding ? 'primary' : undefined}
                 variant={isFunding ? 'solid' : 'ghost'}
               >
                 资金费率
@@ -56,3 +61,5 @@ export function Header() {
     </Box>
   )
 }
+
+export default memo(Header)

@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import type { FundingRow } from '@/types/funding'
-import { fetchBackpackFundingRows, formatFundingRate, formatPrice, formatTime } from '@/api/backpack'
+import { fetchBackpackFundingRows } from '@/api/backpack'
 import { fetchBybitFundingRows } from '@/api/bybit'
+import { formatFundingRate, formatPrice, formatTime } from '@/utils'
 
 interface FundingState {
   rows: FundingRow[]

@@ -1,13 +1,12 @@
 import { extendTheme } from '@chakra-ui/react'
 
+/**
+ * 主题配置
+ */
 export const theme = extendTheme({
   fonts: {
     heading: 'system-ui, Avenir, Helvetica, Arial, sans-serif',
     body: 'system-ui, Avenir, Helvetica, Arial, sans-serif'
-  },
-  radii: {
-    md: '0.5rem',
-    lg: '0.75rem'
   },
   colors: {
     brand: {
@@ -44,6 +43,11 @@ export const theme = extendTheme({
     Select: {
       defaultProps: {
         focusBorderColor: 'brand.500'
+      }
+    },
+    Button: {
+      defaultProps: {
+        fontSize: '14px'
       }
     },
     Textarea: {

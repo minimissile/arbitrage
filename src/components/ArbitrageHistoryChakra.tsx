@@ -7,7 +7,12 @@ interface Props {
   opportunities: ArbitrageOpportunity[]
 }
 
-export default function ArbitrageHistoryChakra({ opportunities }: Props) {
+/**
+ * 套利机会列表
+ * @param opportunities
+ * @constructor
+ */
+function ArbitrageHistoryChakra({ opportunities }: Props) {
   const [sortBy, setSortBy] = useState<'timestamp' | 'spread' | 'profit'>('spread')
   const [filterMinSpread, setFilterMinSpread] = useState(0.1)
 
@@ -23,7 +28,8 @@ export default function ArbitrageHistoryChakra({ opportunities }: Props) {
     .slice(0, 20)
 
   const formatTimeAgo = (timestamp: number) => {
-    const minutes = Math.floor((Date.now() - timestamp) / (1000 * 60))
+    const now = new Date().getTime()
+    const minutes = Math.floor((now - timestamp) / (1000 * 60))
     if (minutes < 1) return '刚刚'
     if (minutes < 60) return `${minutes} 分钟前`
     const hours = Math.floor(minutes / 60)
@@ -181,3 +187,5 @@ export default function ArbitrageHistoryChakra({ opportunities }: Props) {
     </Box>
   )
 }
+
+export default ArbitrageHistoryChakra
