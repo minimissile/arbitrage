@@ -1,7 +1,8 @@
 // 各交易所邀请码
 export const invitationCode = {
   binance: '50200949',
-  reya: 'h9kehws7'
+  reya: 'h9kehws7',
+  aster: '17b881'
 }
 
 // 外部链接
@@ -31,10 +32,14 @@ export const externalLinks = {
   // whitebit 现货交易链接
   whitebitSpot: (symbol: string) => `https://whitebit.com/trade/${symbol.toUpperCase()}_USDT`,
   // Reya 合约交易链接
-  reyaFutures: (symbol: string) => `https://app.reya.xyz/trade/${symbol.toLowerCase()}?referredBy=${invitationCode.reya}`
+  reyaFutures: (symbol: string) => `https://app.reya.xyz/trade/${symbol.toLowerCase()}?referredBy=${invitationCode.reya}`,
+  // Aster 合约交易链接
+  asterFutures: (symbol: string) =>
+    `https://www.asterdex.com/zh-CN/trade/pro/futures/${symbol.toUpperCase()}USDT?ref=${invitationCode.aster}`,
+  // Aster 现货交易链接
+  asterSpot: (symbol: string) =>
+    `https://www.asterdex.com/zh-CN/trade/pro/spot/${symbol.toUpperCase()}USDT?ref=${invitationCode.aster}`
 }
-
-//
 
 /**
  * 获取交易所交易链接
@@ -54,6 +59,7 @@ export function tradeUrlForExchange(exchange: string, symbol: string, type: 'spo
   if (ex.includes('mexc')) return type === 'spot' ? externalLinks.mexcSpot(base) : externalLinks.mexcFutures(base)
   if (ex.includes('gate')) return type === 'spot' ? externalLinks.gateSpot(base) : externalLinks.gateFutures(base)
   if (ex.includes('whitebit')) return externalLinks.whitebitSpot(base)
+  if (ex.includes('aster')) return type === 'spot' ? externalLinks.asterSpot(base) : externalLinks.asterFutures(base)
 
   return externalLinks.binanceSPot(base)
 }

@@ -5,6 +5,7 @@ import { fetchBybitFundingRows } from '@/api/bybit'
 import { fetchReyaFundingRows } from '@/api/reya'
 import type { FundingRow } from '@/types/funding'
 import { v4 as uuidv4 } from 'uuid'
+import { fetchAsterFundingRows } from '@/api/aster.ts'
 
 /**
  * backpack 资金费率查询
@@ -40,8 +41,13 @@ export function useUnifiedFundingQuery() {
     refetchInterval: 60_000,
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      const [bp, by, ry] = await Promise.all([fetchBackpackFundingRows(), fetchBybitFundingRows(), fetchReyaFundingRows()])
-      const rowsRaw = [...(bp ?? []), ...(by ?? []), ...(ry ?? [])]
+      const [bp, by, ry, ast] = await Promise.all([
+        fetchBackpackFundingRows(),
+        fetchBybitFundingRows(),
+        fetchReyaFundingRows(),
+        fetchAsterFundingRows()
+      ])
+      const rowsRaw = [...(bp ?? []), ...(by ?? []), ...(ry ?? []), ...(ast ?? [])]
       return rowsRaw.map(r => ({ id: uuidv4(), ...r }))
     }
   })

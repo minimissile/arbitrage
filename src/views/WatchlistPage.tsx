@@ -20,6 +20,8 @@ import {
 } from '@chakra-ui/react'
 import { useArbitrageStore } from '@/stores/arbitrageStore'
 import ExchangeFundingCard from '@/components/ExchangeFundingCard'
+import type { FundingRow } from '@/types/funding'
+import { fetchAsterFundingRow } from '@/api/aster'
 
 /**
  * 观察列表页面
@@ -33,6 +35,7 @@ export default function WatchlistPage() {
   const startWatch = useArbitrageStore(s => s.startWatch)
   const clearWatchlist = useArbitrageStore(s => s.clearWatchlist)
   const [text, setText] = useState('')
+  const [asterRows, setAsterRows] = useState<Record<string, FundingRow | null>>({})
 
   const apply = () => {
     const tokens = text
@@ -54,6 +57,17 @@ export default function WatchlistPage() {
   useEffect(() => {
     if (watchlistSymbols.length) startWatch().then()
   }, [startWatch, watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchAsterFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setAsterRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
 
   return (
     <Box display="grid" gap={6}>
@@ -160,6 +174,9 @@ export default function WatchlistPage() {
                       {group.entries.map(e => (
                         <ExchangeFundingCard key={`${e.exchange}-${group.symbol}`} {...e} />
                       ))}
+                      {asterRows[group.symbol] && (
+                        <ExchangeFundingCard key={`Aster-${group.symbol}`} {...asterRows[group.symbol]!} />
+                      )}
                     </HStack>
                   </Td>
                 </Tr>

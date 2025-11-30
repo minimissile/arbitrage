@@ -2,7 +2,7 @@ import { get } from '@/api/client'
 import type { FundingRow } from '@/types/funding'
 
 /**
- * 获取 Reya 资金费率
+ * 获取 Reya 资金费率列表
  * 来源: https://api.reya.xyz/api/markets
  */
 export async function fetchReyaFundingRows(): Promise<FundingRow[]> {

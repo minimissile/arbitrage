@@ -2,7 +2,7 @@ import { get } from '@/api/client'
 import type { FundingRow } from '@/types/funding'
 
 /**
- * 获取 bybit 资金费率
+ * 获取 bybit 资金费率列表
  */
 export async function fetchBybitFundingRows(): Promise<FundingRow[]> {
   const path = '/v5/market/tickers'

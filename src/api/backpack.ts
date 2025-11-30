@@ -2,7 +2,7 @@ import { get } from '@/api/client'
 import type { FundingRow } from '@/types/funding'
 
 /**
- * 获取 backpack 资金费率
+ * 获取 backpack 资金费率列表
  */
 export async function fetchBackpackFundingRows(): Promise<FundingRow[]> {
   const url = '/backpack/api/v1/markPrices'
