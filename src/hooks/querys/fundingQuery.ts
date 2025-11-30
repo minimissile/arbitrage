@@ -2,6 +2,7 @@ import { keepPreviousData, useQuery } from '@tanstack/react-query'
 import { formatFundingRate, formatPrice, formatTime } from '@/utils'
 import { fetchBackpackFundingRows } from '@/api/backpack'
 import { fetchBybitFundingRows } from '@/api/bybit'
+import { fetchReyaFundingRows } from '@/api/reya'
 import type { FundingRow } from '@/types/funding'
 import { v4 as uuidv4 } from 'uuid'
 
@@ -39,8 +40,8 @@ export function useUnifiedFundingQuery() {
     refetchInterval: 60_000,
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      const [bp, by] = await Promise.all([fetchBackpackFundingRows(), fetchBybitFundingRows()])
-      const rowsRaw = [...(bp ?? []), ...(by ?? [])]
+      const [bp, by, ry] = await Promise.all([fetchBackpackFundingRows(), fetchBybitFundingRows(), fetchReyaFundingRows()])
+      const rowsRaw = [...(bp ?? []), ...(by ?? []), ...(ry ?? [])]
       return rowsRaw.map(r => ({ id: uuidv4(), ...r }))
     }
   })
