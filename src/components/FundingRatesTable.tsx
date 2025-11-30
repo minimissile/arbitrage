@@ -17,8 +17,8 @@ import {
   Flex
 } from '@chakra-ui/react'
 import { useUnifiedFundingQuery, groupFundingRows, fundingFormat } from '@/hooks/querys'
-import { ArrowDown, ArrowUp, ExternalLink } from 'lucide-react'
-import { tradeUrlForExchange } from '@/config'
+import { ArrowDown, ArrowUp } from 'lucide-react'
+import ExchangeFundingCard from '@/components/ExchangeFundingCard'
 
 /**
  * 资金费率表格
@@ -205,42 +205,12 @@ export default function FundingRatesTable() {
                       <HStack gap={2} wrap="wrap">
                         {/*各交易所资金费率数据*/}
                         {g.entries.map(e => (
-                          <Box
-                            fontSize={'11px'}
+                          <ExchangeFundingCard
                             key={e.id ?? `${e.exchange}-${g.symbol}`}
-                            px={1.5}
-                            py={0.5}
-                            lineHeight={'1.45'}
-                            borderWidth="1px"
-                            borderRadius="base"
-                            letterSpacing={'-0.3px'}
-                          >
-                            <Flex
-                              align={'center'}
-                              gap={1}
-                              textDecoration={'underline'}
-                              textDecorationColor={'blue.500'}
-                              cursor={'pointer'}
-                              onClick={() => {
-                                window.open(tradeUrlForExchange(e.exchange, e.symbol, 'futures'), '_blank')
-                              }}
-                            >
-                              <Text>{e.exchange}</Text>
-                              <ExternalLink size={12} />
-                            </Flex>
-
-                            <Text fontSize={'xs'} fontWeight="medium">
-                              {fundingFormat.formatFundingRate(e.fundingRate)}
-                            </Text>
-                            {e.price !== undefined && (
-                              <Text fontSize="xs" color="gray.600">
-                                价格: {fundingFormat.formatPrice(e.price)}
-                              </Text>
-                            )}
-                            <Text color="gray.600">日化: {fundingFormat.formatFundingRate(e.dailyFundingRate)}</Text>
-                            <Text color="gray.600">周期: {e.cycle}h</Text>
-                            <Text color="gray.600">结算: {fundingFormat.formatTime(e.nextFundingTimestamp)}</Text>
-                          </Box>
+                            entry={e}
+                            symbol={g.symbol}
+                            showTradeLink={true}
+                          />
                         ))}
                       </HStack>
                     </Td>

@@ -20,6 +20,7 @@ import {
 } from '@chakra-ui/react'
 import { useArbitrageStore } from '@/stores/arbitrageStore'
 import { fundingFormat } from '@/hooks/querys'
+import ExchangeFundingCard from '@/components/ExchangeFundingCard'
 
 /**
  * 观察列表页面
@@ -154,29 +155,12 @@ export default function WatchlistPage() {
                   <Td py={1.5}>
                     <HStack gap={2} wrap="wrap">
                       {group.entries.map(e => (
-                        <Box
+                        <ExchangeFundingCard
                           key={`${e.exchange}-${group.symbol}`}
-                          px={2}
-                          py={2}
-                          borderWidth="1px"
-                          borderRadius="md"
-                          minW="200px"
-                          fontSize="11px"
-                          lineHeight="1.45"
-                        >
-                          <Text>{e.exchange}</Text>
-                          <Text fontSize="xs" fontWeight="medium">
-                            {fundingFormat.formatFundingRate(e.fundingRate)}
-                          </Text>
-                          {e.price !== undefined && (
-                            <Text fontSize="xs" color="gray.600">
-                              价格: {fundingFormat.formatPrice(e.price)}
-                            </Text>
-                          )}
-                          <Text color="gray.600">日化: {fundingFormat.formatFundingRate(e.dailyFundingRate)}</Text>
-                          <Text color="gray.600">周期: {e.cycle}h</Text>
-                          <Text color="gray.600">结算: {fundingFormat.formatTime(e.nextFundingTimestamp)}</Text>
-                        </Box>
+                          entry={e}
+                          symbol={group.symbol}
+                          showTradeLink={true}
+                        />
                       ))}
                     </HStack>
                   </Td>
