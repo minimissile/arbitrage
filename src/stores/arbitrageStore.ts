@@ -6,6 +6,8 @@
  * - addXXX：增量写入数据并做容量控制（slice），避免无限增长导致性能问题
  */
 import { create } from 'zustand'
+import type { CoinGlassArb } from '@/hooks/querys/coinglass'
+import { fetchCoinGlassFundingArb } from '@/hooks/querys/coinglass'
 import type { MarketData, AlertSettings, ArbitrageOpportunity, PriceData, FundingRateData } from '@/types'
 import type { FundingRow } from '@/types/funding'
 
@@ -27,9 +29,35 @@ interface ArbitrageStore {
   addArbitrageOpportunity: (opportunity: ArbitrageOpportunity) => void
   addFundingRateData: (data: FundingRateData) => void
   setFundingRows: (rows: FundingRow[]) => void
+
+  coinGlassArbAll: CoinGlassArb[]
+  coinGlassArbFiltered: CoinGlassArb[]
+  arbPageData: CoinGlassArb[]
+  arbPage: number
+  arbPageSize: number
+  arbTotal: number
+  arbLoading: boolean
+  arbError: string | null
+  arbFilters: { search: string; exchange: string; minApr: number | null; order: 'desc' | 'asc' }
+  arbExchangeOptions: string[]
+  fetchCoinGlassArb: (usd?: number) => Promise<void>
+  setArbFilters: (
+    filters: Partial<{
+      search: string
+      exchange: string
+      minApr: number | null
+      order: 'desc' | 'asc'
+    }>
+  ) => void
+  setArbPage: (page: number) => void
+  setArbPageSize: (size: number) => void
+  _applyArbFilters: (
+    items: CoinGlassArb[],
+    filters: { search: string; exchange: string; minApr: number | null; order: 'desc' | 'asc' }
+  ) => CoinGlassArb[]
 }
 
-export const useArbitrageStore = create<ArbitrageStore>(set => ({
+export const useArbitrageStore = create<ArbitrageStore>((set, get) => ({
   marketData: {
     prices: [],
     arbitrageOpportunities: [],
@@ -114,5 +142,100 @@ export const useArbitrageStore = create<ArbitrageStore>(set => ({
       }
       const grouped = Array.from(map.entries()).map(([symbol, entries]) => ({ symbol, entries }))
       return { fundingRows: rows, fundingComparisons: grouped }
+    }),
+
+  coinGlassArbAll: [],
+  coinGlassArbFiltered: [],
+  arbPageData: [],
+  arbPage: 1,
+  arbPageSize: 10,
+  arbTotal: 0,
+  arbLoading: false,
+  arbError: null,
+  arbFilters: { search: '', exchange: 'ALL', minApr: null, order: 'desc' },
+  arbExchangeOptions: [],
+  fetchCoinGlassArb: async (usd = 10000) => {
+    set({ arbLoading: true, arbError: null })
+    try {
+      const items = await fetchCoinGlassFundingArb(usd)
+      const setEx = new Set<string>()
+      for (const it of items) {
+        if (it?.buy?.exchange) setEx.add(it.buy.exchange)
+        if (it?.sell?.exchange) setEx.add(it.sell.exchange)
+      }
+      const exchangeOptions = Array.from(setEx).sort()
+      set({ coinGlassArbAll: items, arbExchangeOptions: exchangeOptions, arbPage: 1 })
+      const { arbFilters, arbPageSize } = get()
+      const filtered = get()._applyArbFilters(items, arbFilters)
+      const total = filtered.length
+      const pageData = filtered.slice(0, arbPageSize)
+      set({ coinGlassArbFiltered: filtered, arbTotal: total, arbPageData: pageData })
+    } catch (e: any) {
+      const msg = String(e?.message ?? e)
+      const code = (e?.code ?? '') as string
+      const isAbort = code === 'ERR_CANCELED' || msg.toLowerCase().includes('abort') || msg.toLowerCase().includes('aborted')
+      if (isAbort) {
+        set({ arbError: null })
+      } else {
+        set({ arbError: msg, coinGlassArbAll: [], coinGlassArbFiltered: [], arbPageData: [], arbTotal: 0 })
+      }
+    } finally {
+      set({ arbLoading: false })
+    }
+  },
+  setArbFilters: filters => {
+    const next = { ...get().arbFilters, ...filters }
+    set({ arbFilters: next })
+    const filtered = get()._applyArbFilters(get().coinGlassArbAll, next)
+    const total = filtered.length
+    const { arbPage, arbPageSize } = get()
+    const start = Math.max(0, (arbPage - 1) * arbPageSize)
+    const pageData = filtered.slice(start, start + arbPageSize)
+    set({ coinGlassArbFiltered: filtered, arbTotal: total, arbPageData: pageData })
+  },
+  setArbPage: page => {
+    const { arbPageSize, coinGlassArbFiltered } = get()
+    const start = Math.max(0, (page - 1) * arbPageSize)
+    const pageData = coinGlassArbFiltered.slice(start, start + arbPageSize)
+    set({ arbPage: page, arbPageData: pageData })
+  },
+  setArbPageSize: size => {
+    const { arbPage, coinGlassArbFiltered } = get()
+    const start = Math.max(0, (arbPage - 1) * size)
+    const pageData = coinGlassArbFiltered.slice(start, start + size)
+    set({ arbPageSize: size, arbPageData: pageData })
+  },
+
+  _applyArbFilters: (
+    items: CoinGlassArb[],
+    filters: {
+      search: string
+      exchange: string
+      minApr: number | null
+      order: 'desc' | 'asc'
+    }
+  ) => {
+    const q = filters.search.trim().toLowerCase()
+    const min = filters.minApr ?? null
+    const arr = items.filter(it => {
+      const matchQ = q
+        ? it.symbol?.toLowerCase().includes(q) ||
+          it.buy?.exchange?.toLowerCase().includes(q) ||
+          it.sell?.exchange?.toLowerCase().includes(q)
+        : true
+      const matchEx =
+        filters.exchange === 'ALL'
+          ? true
+          : it.buy?.exchange?.toLowerCase() === filters.exchange.toLowerCase() ||
+            it.sell?.exchange?.toLowerCase() === filters.exchange.toLowerCase()
+      const matchApr = min !== null ? (it.apr ?? 0) >= min : true
+      return matchQ && matchEx && matchApr
     })
+    arr.sort((a, b) => {
+      const av = a.apr ?? 0
+      const bv = b.apr ?? 0
+      return filters.order === 'desc' ? bv - av : av - bv
+    })
+    return arr
+  }
 }))

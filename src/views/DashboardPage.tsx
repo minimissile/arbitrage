@@ -29,7 +29,7 @@ export default function DashboardPage() {
             <Heading size="md" color="gray.900">
               机会列表
             </Heading>
-            <Box borderWidth="1px" borderColor="gray.200" bg="white" p={4} borderRadius="xl" boxShadow="sm">
+            <Box borderWidth="0.5px" borderColor="gray.200" bg="white" p={4} borderRadius="base">
               <ArbitrageOpportunities />
             </Box>
           </Box>
