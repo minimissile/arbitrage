@@ -64,9 +64,12 @@ export default function WatchlistPage() {
         </Text>
       </Box>
 
-      <HStack gap={3}>
+      <HStack gap={2}>
         <Input
-          placeholder="输入币种，如 BTC,ETH,SOL"
+          fontSize={'sm'}
+          px={3}
+          borderRadius={'base'}
+          placeholder="输入币种，如BTC、ETH、SOL..."
           value={text}
           onChange={e => setText(e.target.value)}
           onKeyDown={e => {
@@ -76,18 +79,19 @@ export default function WatchlistPage() {
             }
           }}
         />
-        <Button colorScheme="brand" onClick={apply}>
+        <Button colorScheme="brand" onClick={apply} fontSize={'sm'} borderRadius={'base'}>
           开始观察
         </Button>
-        <Button variant="outline" onClick={clearWatchlist}>
+        <Button variant="outline" onClick={clearWatchlist} fontSize={'sm'} borderRadius={'base'}>
           清空
         </Button>
       </HStack>
 
+      {/*观察中的币种列表*/}
       {watchlistSymbols.length > 0 && (
         <HStack gap={2} flexWrap="wrap">
           {watchlistSymbols.map(sym => (
-            <Tag key={`sym-${sym}`} size="md" borderRadius="full" variant="subtle" colorScheme="gray">
+            <Tag key={`sym-${sym}`} size="md" borderRadius="base" variant="subtle" colorScheme="gray">
               <TagLabel>{sym}</TagLabel>
               <TagCloseButton
                 onClick={async () => {
