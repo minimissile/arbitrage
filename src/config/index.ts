@@ -2,7 +2,8 @@
 export const invitationCode = {
   binance: '50200949',
   reya: 'h9kehws7',
-  aster: '17b881'
+  aster: '17b881',
+  edgex: '533945374'
 }
 
 // 外部链接
@@ -38,7 +39,9 @@ export const externalLinks = {
     `https://www.asterdex.com/zh-CN/trade/pro/futures/${symbol.toUpperCase()}USDT?ref=${invitationCode.aster}`,
   // Aster 现货交易链接
   asterSpot: (symbol: string) =>
-    `https://www.asterdex.com/zh-CN/trade/pro/spot/${symbol.toUpperCase()}USDT?ref=${invitationCode.aster}`
+    `https://www.asterdex.com/zh-CN/trade/pro/spot/${symbol.toUpperCase()}USDT?ref=${invitationCode.aster}`,
+  // EdgeX 合约交易链接
+  edgexFutures: (_symbol: string) => `https://pro.edgex.exchange/referral/${invitationCode.edgex}`
 }
 
 /**
@@ -59,6 +62,7 @@ export function tradeUrlForExchange(exchange: string, symbol: string, type: 'spo
   if (ex.includes('mexc')) return type === 'spot' ? externalLinks.mexcSpot(base) : externalLinks.mexcFutures(base)
   if (ex.includes('gate')) return type === 'spot' ? externalLinks.gateSpot(base) : externalLinks.gateFutures(base)
   if (ex.includes('whitebit')) return externalLinks.whitebitSpot(base)
+  if (ex.includes('edgex')) return externalLinks.edgexFutures(base)
   if (ex.includes('aster')) return type === 'spot' ? externalLinks.asterSpot(base) : externalLinks.asterFutures(base)
 
   return externalLinks.binanceSPot(base)
