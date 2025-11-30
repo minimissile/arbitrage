@@ -59,6 +59,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: true,
         rewrite: p => p.replace(/^\/coinglass/, '')
+      },
+      '/edgex': {
+        target: 'https://pro.edgex.exchange',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/edgex/, '')
       }
     }
   }

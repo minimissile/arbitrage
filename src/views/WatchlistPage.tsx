@@ -22,6 +22,7 @@ import { useArbitrageStore } from '@/stores/arbitrageStore'
 import ExchangeFundingCard from '@/components/ExchangeFundingCard'
 import type { FundingRow } from '@/types/funding'
 import { fetchAsterFundingRow } from '@/api/aster'
+import { fetchEdgexFundingRowBySymbol } from '@/api/edgex'
 
 /**
  * 观察列表页面
@@ -36,6 +37,7 @@ export default function WatchlistPage() {
   const clearWatchlist = useArbitrageStore(s => s.clearWatchlist)
   const [text, setText] = useState('')
   const [asterRows, setAsterRows] = useState<Record<string, FundingRow | null>>({})
+  const [edgexRows, setEdgexRows] = useState<Record<string, FundingRow | null>>({})
 
   const apply = () => {
     const tokens = text
@@ -65,6 +67,17 @@ export default function WatchlistPage() {
       const map: Record<string, FundingRow | null> = {}
       for (const [sym, row] of results) map[sym] = row
       setAsterRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchEdgexFundingRowBySymbol(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setEdgexRows(map)
     }
     run().then()
   }, [watchlistSymbols])
@@ -176,6 +189,9 @@ export default function WatchlistPage() {
                       ))}
                       {asterRows[group.symbol] && (
                         <ExchangeFundingCard key={`Aster-${group.symbol}`} {...asterRows[group.symbol]!} />
+                      )}
+                      {edgexRows[group.symbol] && (
+                        <ExchangeFundingCard key={`EdgeX-${group.symbol}`} {...edgexRows[group.symbol]!} />
                       )}
                     </HStack>
                   </Td>
