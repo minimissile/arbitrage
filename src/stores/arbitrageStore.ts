@@ -68,6 +68,13 @@ interface ArbitrageStore {
       sortBy: 'apr' | 'funding' | 'spread'
     }
   ) => CoinGlassArb[]
+  watchlistSymbols: string[]
+  watchlistData: { symbol: string; entries: FundingRow[] }[]
+  watchlistLoading: boolean
+  setWatchlistSymbols: (symbols: string[]) => void
+  clearWatchlist: () => void
+  startWatch: () => Promise<void>
+  loadWatchlistFromCache: () => void
 }
 
 export const useArbitrageStore = create<ArbitrageStore>((set, get) => ({
@@ -256,5 +263,54 @@ export const useArbitrageStore = create<ArbitrageStore>((set, get) => ({
       return filters.order === 'desc' ? bv - av : av - bv
     })
     return arr
+  },
+  watchlistSymbols: [],
+  watchlistData: [],
+  watchlistLoading: false,
+  setWatchlistSymbols: symbols => {
+    const norm = Array.from(new Set(symbols.map(s => s.trim().toUpperCase()).filter(Boolean)))
+    set({ watchlistSymbols: norm })
+    try {
+      localStorage.setItem('arb_watchlist_symbols', JSON.stringify(norm))
+    } catch {}
+  },
+  clearWatchlist: () => {
+    set({ watchlistSymbols: [], watchlistData: [] })
+    try {
+      localStorage.removeItem('arb_watchlist_symbols')
+    } catch {}
+  },
+  startWatch: async () => {
+    set({ watchlistLoading: true })
+    const syms = get().watchlistSymbols
+    const now = Date.now()
+    const base = new Date(now)
+    base.setMinutes(0, 0, 0)
+    let nextHour = base.getTime()
+    if (nextHour <= now) nextHour += 60 * 60 * 1000
+    const make = (exchange: string, symbol: string, cycle: number, nextTs: number): FundingRow => ({
+      exchange,
+      symbol,
+      fundingRate: 0,
+      nextFundingTimestamp: nextTs,
+      price: undefined,
+      dailyFundingRate: 0,
+      cycle
+    })
+    const data = syms.map(symbol => ({
+      symbol,
+      entries: [make('Bybit', symbol, 4, 0), make('Backpack', symbol, 1, 0), make('Reya', symbol, 1, nextHour)]
+    }))
+    set({ watchlistData: data, watchlistLoading: false })
+  },
+  loadWatchlistFromCache: () => {
+    try {
+      const raw = localStorage.getItem('arb_watchlist_symbols')
+      const arr = raw ? (JSON.parse(raw) as string[]) : []
+      const norm = Array.from(new Set(arr.map(s => String(s).trim().toUpperCase()).filter(Boolean)))
+      set({ watchlistSymbols: norm })
+    } catch {
+      set({ watchlistSymbols: [] })
+    }
   }
 }))

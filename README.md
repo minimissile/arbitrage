@@ -4,8 +4,9 @@
 
 # 各交易所的资金费率接口：
 
-- Bybit（线性永续）: `https://api.bybit.com/v5/market/tickers?category=linear`
-- Backpack（资金费率）: `https://api.backpack.exchange/api/v1/markPrices`
+- Bybit（资金费率列表）: `https://api.bybit.com/v5/market/tickers?category=linear`
+- Backpack（资金费率列表）: `https://api.backpack.exchange/api/v1/markPrices`
+- Reya（资金费率列表）: `https://api.reya.xyz/api/markets`
 
 测试链接：
 https://traearbitragecske.vercel.app

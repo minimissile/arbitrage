@@ -13,6 +13,10 @@ const router = createBrowserRouter([
       {
         path: 'funding',
         lazy: () => import('@/views/FundingPage').then(m => ({ Component: m.default }))
+      },
+      {
+        path: 'watchlist',
+        lazy: () => import('@/views/WatchlistPage').then(m => ({ Component: m.default }))
       }
     ]
   }

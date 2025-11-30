@@ -1,7 +1,8 @@
 import { useArbitrageStore } from '@/stores/arbitrageStore'
 import { ArbitrageOverview } from '@/components/ArbitrageOverview'
 import ArbitrageOpportunities from '@/components/ArbitrageOpportunities.tsx'
-import { Box, Heading, Text, Grid, GridItem } from '@chakra-ui/react'
+import { Box, Heading, Text, Grid, GridItem, Button, HStack } from '@chakra-ui/react'
+import { Link as RouterLink } from 'react-router-dom'
 
 /**
  * 统计页面
@@ -19,6 +20,11 @@ export default function DashboardPage() {
         <Text fontSize="sm" color="gray.600">
           监控跨交易所价差与历史机会
         </Text>
+        <HStack mt={3}>
+          <Button as={RouterLink} to="/watchlist" colorScheme="brand" variant="solid">
+            手动观察列表
+          </Button>
+        </HStack>
       </Box>
 
       <ArbitrageOverview opportunities={marketData.arbitrageOpportunities} />
