@@ -156,26 +156,36 @@ export default function FundingRatesTable() {
 
           {isLoading ? (
             <Tbody>
-              {Array.from({ length: 8 }).map((_, i) => (
+              {Array.from({ length: 10 }).map((_, i) => (
                 <Tr key={`loading-${i}`}>
                   <Td>
-                    <Skeleton w="48px" h="16px" borderRadius="md" />
+                    <HStack align="center">
+                      <Skeleton w="64px" h="16px" borderRadius="base" />
+                    </HStack>
                   </Td>
                   <Td>
                     <HStack gap={2} wrap="wrap">
-                      {Array.from({ length: 3 }).map((__, j) => (
-                        <Box key={`card-${i}-${j}`} px={2} py={2} borderWidth="1px" borderRadius="md" minW="160px">
-                          <Skeleton w="64px" h="12px" mb={2} />
-                          <SkeletonText noOfLines={3} spacing="2" skeletonHeight="10px" />
+                      {Array.from({ length: 6 }).map((__, j) => (
+                        <Box
+                          key={`card-${i}-${j}`}
+                          px={2}
+                          py={2}
+                          borderWidth="0.5px"
+                          borderRadius="base"
+                          minW="105px"
+                          h={'105px'}
+                        >
+                          <Skeleton w="96px" h="12px" mb={2} />
+                          <SkeletonText noOfLines={5} spacing={1} skeletonHeight="10px" />
                         </Box>
                       ))}
                     </HStack>
                   </Td>
                   <Td>
-                    <Skeleton w="72px" h="16px" />
+                    <Skeleton w="84px" h="16px" borderRadius="base" />
                   </Td>
                   <Td>
-                    <Skeleton w="100px" h="16px" />
+                    <Skeleton w="120px" h="16px" borderRadius="base" />
                   </Td>
                 </Tr>
               ))}
