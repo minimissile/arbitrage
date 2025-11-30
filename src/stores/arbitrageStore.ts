@@ -38,7 +38,13 @@ interface ArbitrageStore {
   arbTotal: number
   arbLoading: boolean
   arbError: string | null
-  arbFilters: { search: string; exchange: string; minApr: number | null; order: 'desc' | 'asc' }
+  arbFilters: {
+    search: string
+    exchange: string
+    minApr: number | null
+    order: 'desc' | 'asc'
+    sortBy: 'apr' | 'funding' | 'spread'
+  }
   arbExchangeOptions: string[]
   fetchCoinGlassArb: (usd?: number) => Promise<void>
   setArbFilters: (
@@ -47,13 +53,20 @@ interface ArbitrageStore {
       exchange: string
       minApr: number | null
       order: 'desc' | 'asc'
+      sortBy: 'apr' | 'funding' | 'spread'
     }>
   ) => void
   setArbPage: (page: number) => void
   setArbPageSize: (size: number) => void
   _applyArbFilters: (
     items: CoinGlassArb[],
-    filters: { search: string; exchange: string; minApr: number | null; order: 'desc' | 'asc' }
+    filters: {
+      search: string
+      exchange: string
+      minApr: number | null
+      order: 'desc' | 'asc'
+      sortBy: 'apr' | 'funding' | 'spread'
+    }
   ) => CoinGlassArb[]
 }
 
@@ -152,7 +165,7 @@ export const useArbitrageStore = create<ArbitrageStore>((set, get) => ({
   arbTotal: 0,
   arbLoading: false,
   arbError: null,
-  arbFilters: { search: '', exchange: 'ALL', minApr: null, order: 'desc' },
+  arbFilters: { search: '', exchange: 'ALL', minApr: null, order: 'desc', sortBy: 'apr' },
   arbExchangeOptions: [],
   fetchCoinGlassArb: async (usd = 10000) => {
     set({ arbLoading: true, arbError: null })
@@ -213,6 +226,7 @@ export const useArbitrageStore = create<ArbitrageStore>((set, get) => ({
       exchange: string
       minApr: number | null
       order: 'desc' | 'asc'
+      sortBy: 'apr' | 'funding' | 'spread'
     }
   ) => {
     const q = filters.search.trim().toLowerCase()
@@ -232,8 +246,13 @@ export const useArbitrageStore = create<ArbitrageStore>((set, get) => ({
       return matchQ && matchEx && matchApr
     })
     arr.sort((a, b) => {
-      const av = a.apr ?? 0
-      const bv = b.apr ?? 0
+      const pick = (x: CoinGlassArb) => {
+        if (filters.sortBy === 'funding') return x.funding ?? 0
+        if (filters.sortBy === 'spread') return x.spread ?? 0
+        return x.apr ?? 0
+      }
+      const av = pick(a)
+      const bv = pick(b)
       return filters.order === 'desc' ? bv - av : av - bv
     })
     return arr

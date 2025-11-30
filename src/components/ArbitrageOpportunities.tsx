@@ -156,9 +156,74 @@ function ArbitrageOpportunities() {
                 <Th>排名</Th>
                 <Th>币种</Th>
                 <Th>套利组合</Th>
-                <Th>当前年化</Th>
-                <Th>净资金率</Th>
-                <Th>价差率</Th>
+                <Th>
+                  <Flex
+                    align={'center'}
+                    cursor={'pointer'}
+                    onClick={() =>
+                      setArbFilters({
+                        sortBy: 'apr',
+                        order: arbFilters.order === 'desc' ? 'asc' : 'desc'
+                      })
+                    }
+                    gap={1}
+                  >
+                    当前年化
+                    <ArrowDown
+                      size={13}
+                      style={{
+                        transition: 'transform 0.25s ease',
+                        transform: arbFilters.order === 'desc' && arbFilters.sortBy === 'apr' ? 'rotate(0deg)' : 'rotate(180deg)'
+                      }}
+                    />
+                  </Flex>
+                </Th>
+                <Th>
+                  <Flex
+                    align={'center'}
+                    cursor={'pointer'}
+                    onClick={() =>
+                      setArbFilters({
+                        sortBy: 'funding',
+                        order: arbFilters.order === 'desc' ? 'asc' : 'desc'
+                      })
+                    }
+                    gap={1}
+                  >
+                    净资金率
+                    <ArrowDown
+                      size={13}
+                      style={{
+                        transition: 'transform 0.25s ease',
+                        transform:
+                          arbFilters.order === 'desc' && arbFilters.sortBy === 'funding' ? 'rotate(0deg)' : 'rotate(180deg)'
+                      }}
+                    />
+                  </Flex>
+                </Th>
+                <Th>
+                  <Flex
+                    align={'center'}
+                    cursor={'pointer'}
+                    onClick={() =>
+                      setArbFilters({
+                        sortBy: 'spread',
+                        order: arbFilters.order === 'desc' ? 'asc' : 'desc'
+                      })
+                    }
+                    gap={1}
+                  >
+                    价差率
+                    <ArrowDown
+                      size={13}
+                      style={{
+                        transition: 'transform 0.25s ease',
+                        transform:
+                          arbFilters.order === 'desc' && arbFilters.sortBy === 'spread' ? 'rotate(0deg)' : 'rotate(180deg)'
+                      }}
+                    />
+                  </Flex>
+                </Th>
                 <Th>持仓</Th>
                 <Th>距离结算</Th>
                 <Th textAlign={'center'}>交易</Th>
