@@ -1,6 +1,7 @@
 // 各交易所邀请码
 export const invitationCode = {
-  binance: '50200949'
+  binance: '50200949',
+  reya: 'h9kehws7'
 }
 
 // 外部链接
@@ -28,8 +29,12 @@ export const externalLinks = {
   // gate 合约交易链接
   gateFutures: (symbol: string) => `https://www.gate.io/futures/${symbol.toUpperCase()}_USDT`,
   // whitebit 现货交易链接
-  whitebitSpot: (symbol: string) => `https://whitebit.com/trade/${symbol.toUpperCase()}_USDT`
+  whitebitSpot: (symbol: string) => `https://whitebit.com/trade/${symbol.toUpperCase()}_USDT`,
+  // Reya 合约交易链接
+  reyaFutures: (symbol: string) => `https://app.reya.xyz/trade/${symbol.toLowerCase()}?referredBy=${invitationCode.reya}`
 }
+
+//
 
 /**
  * 获取交易所交易链接
@@ -45,6 +50,7 @@ export function tradeUrlForExchange(exchange: string, symbol: string, type: 'spo
   if (ex.includes('okx')) return type === 'spot' ? externalLinks.okxSpot(base) : externalLinks.okxFutures(base)
   if (ex.includes('bybit')) return type === 'spot' ? externalLinks.bybitSpot(base) : externalLinks.bybitPerp(base)
   if (ex.includes('kraken')) return externalLinks.krakenSpot(base)
+  if (ex.includes('reya')) return externalLinks.reyaFutures(base)
   if (ex.includes('mexc')) return type === 'spot' ? externalLinks.mexcSpot(base) : externalLinks.mexcFutures(base)
   if (ex.includes('gate')) return type === 'spot' ? externalLinks.gateSpot(base) : externalLinks.gateFutures(base)
   if (ex.includes('whitebit')) return externalLinks.whitebitSpot(base)

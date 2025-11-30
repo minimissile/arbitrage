@@ -17,7 +17,8 @@ import {
   Flex
 } from '@chakra-ui/react'
 import { useUnifiedFundingQuery, groupFundingRows, fundingFormat } from '@/hooks/querys'
-import { ArrowDown, ArrowUp } from 'lucide-react'
+import { ArrowDown, ArrowUp, ExternalLink } from 'lucide-react'
+import { tradeUrlForExchange } from '@/config'
 
 /**
  * 资金费率表格
@@ -214,7 +215,20 @@ export default function FundingRatesTable() {
                             borderRadius="base"
                             letterSpacing={'-0.3px'}
                           >
-                            <Text>{e.exchange}</Text>
+                            <Flex
+                              align={'center'}
+                              gap={1}
+                              textDecoration={'underline'}
+                              textDecorationColor={'blue.500'}
+                              cursor={'pointer'}
+                              onClick={() => {
+                                window.open(tradeUrlForExchange(e.exchange, e.symbol, 'futures'), '_blank')
+                              }}
+                            >
+                              <Text>{e.exchange}</Text>
+                              <ExternalLink size={12} />
+                            </Flex>
+
                             <Text fontSize={'xs'} fontWeight="medium">
                               {fundingFormat.formatFundingRate(e.fundingRate)}
                             </Text>
