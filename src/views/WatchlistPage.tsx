@@ -19,7 +19,6 @@ import {
   TagCloseButton
 } from '@chakra-ui/react'
 import { useArbitrageStore } from '@/stores/arbitrageStore'
-import { fundingFormat } from '@/hooks/querys'
 import ExchangeFundingCard from '@/components/ExchangeFundingCard'
 
 /**
@@ -155,12 +154,7 @@ export default function WatchlistPage() {
                   <Td py={1.5}>
                     <HStack gap={2} wrap="wrap">
                       {group.entries.map(e => (
-                        <ExchangeFundingCard
-                          key={`${e.exchange}-${group.symbol}`}
-                          entry={e}
-                          symbol={group.symbol}
-                          showTradeLink={true}
-                        />
+                        <ExchangeFundingCard key={`${e.exchange}-${group.symbol}`} {...e} />
                       ))}
                     </HStack>
                   </Td>

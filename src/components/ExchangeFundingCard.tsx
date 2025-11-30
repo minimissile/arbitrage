@@ -4,14 +4,9 @@ import { fundingFormat } from '@/hooks/querys'
 import { ExternalLink } from 'lucide-react'
 import { tradeUrlForExchange } from '@/config'
 
-interface Props {
-  entry: FundingRow
-  symbol?: string
-  showTradeLink?: boolean
-}
-
-export default function ExchangeFundingCard({ entry, symbol, showTradeLink = true }: Props) {
-  const sym = symbol ?? entry.symbol
+export default function ExchangeFundingCard(row: FundingRow) {
+  const entry = row
+  const sym = entry.symbol
   const openTrade = () => {
     try {
       window.open(tradeUrlForExchange(entry.exchange, sym, 'futures'), '_blank')
@@ -29,7 +24,7 @@ export default function ExchangeFundingCard({ entry, symbol, showTradeLink = tru
       letterSpacing={'-0.3px'}
       minW="200px"
     >
-      {showTradeLink ? (
+      {
         <Flex
           align={'center'}
           gap={1}
@@ -41,9 +36,7 @@ export default function ExchangeFundingCard({ entry, symbol, showTradeLink = tru
           <Text>{entry.exchange}</Text>
           <ExternalLink size={12} />
         </Flex>
-      ) : (
-        <Text>{entry.exchange}</Text>
-      )}
+      }
 
       <Text fontSize={'xs'} fontWeight="medium">
         {fundingFormat.formatFundingRate(entry.fundingRate)}

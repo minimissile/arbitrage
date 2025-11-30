@@ -205,12 +205,7 @@ export default function FundingRatesTable() {
                       <HStack gap={2} wrap="wrap">
                         {/*各交易所资金费率数据*/}
                         {g.entries.map(e => (
-                          <ExchangeFundingCard
-                            key={e.id ?? `${e.exchange}-${g.symbol}`}
-                            entry={e}
-                            symbol={g.symbol}
-                            showTradeLink={true}
-                          />
+                          <ExchangeFundingCard key={e.id ?? `${e.exchange}-${g.symbol}`} {...e} />
                         ))}
                       </HStack>
                     </Td>
