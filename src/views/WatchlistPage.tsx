@@ -35,6 +35,7 @@ import { fetchBingxFundingRow } from '@/api/bingx'
 import { fetchHtxFundingRow } from '@/api/htx'
 import { fetchLbankFundingRow } from '@/api/lbank'
 import { fetchHyperliquidFundingRow } from '@/api/hyperliquid'
+import { fetchApexFundingRow } from '@/api/apex'
 import { fetchMexcFundingRow } from '@/api/mexc'
 
 /**
@@ -63,6 +64,7 @@ export default function WatchlistPage() {
   const [htxRows, setHtxRows] = useState<Record<string, FundingRow | null>>({})
   const [lbankRows, setLbankRows] = useState<Record<string, FundingRow | null>>({})
   const [hyperRows, setHyperRows] = useState<Record<string, FundingRow | null>>({})
+  const [apexRows, setApexRows] = useState<Record<string, FundingRow | null>>({})
   const [mexcRows, setMexcRows] = useState<Record<string, FundingRow | null>>({})
 
   const apply = () => {
@@ -192,6 +194,17 @@ export default function WatchlistPage() {
       const map: Record<string, FundingRow | null> = {}
       for (const [sym, row] of results) map[sym] = row
       setHyperRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchApexFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setApexRows(map)
     }
     run().then()
   }, [watchlistSymbols])
@@ -380,6 +393,9 @@ export default function WatchlistPage() {
                       )}
                       {hyperRows[group.symbol] && (
                         <ExchangeFundingCard key={`Hyperliquid-${group.symbol}`} {...hyperRows[group.symbol]!} />
+                      )}
+                      {apexRows[group.symbol] && (
+                        <ExchangeFundingCard key={`ApeX-${group.symbol}`} {...apexRows[group.symbol]!} />
                       )}
                       {bitgetRows[group.symbol] && (
                         <ExchangeFundingCard key={`Bitget-${group.symbol}`} {...bitgetRows[group.symbol]!} />

@@ -131,6 +131,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: true,
         rewrite: p => p.replace(/^\/hyperliquid/, '')
+      },
+      '/apex': {
+        target: 'https://omni.apex.exchange',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/apex/, '')
       }
     }
   }

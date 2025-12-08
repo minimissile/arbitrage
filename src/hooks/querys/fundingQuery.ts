@@ -16,6 +16,7 @@ import { fetchMexcFundingRows } from '@/api/mexc'
 import { fetchHtxFundingRows } from '@/api/htx'
 import { fetchLbankFundingRows } from '@/api/lbank'
 import { fetchHyperliquidFundingRows } from '@/api/hyperliquid'
+import { fetchApexFundingRows } from '@/api/apex'
 
 /**
  * backpack 资金费率查询
@@ -51,7 +52,7 @@ export function useUnifiedFundingQuery() {
     refetchInterval: 60_000,
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      const [bp, by, ry, ast, bn, bg, gt, ok, kc, bx, mx, hx, lb, hl] = await Promise.all([
+      const [bp, by, ry, ast, bn, bg, gt, ok, kc, bx, mx, hx, lb, hl, ap] = await Promise.all([
         fetchBackpackFundingRows(),
         fetchBybitFundingRows(),
         fetchReyaFundingRows(),
@@ -65,7 +66,8 @@ export function useUnifiedFundingQuery() {
         fetchMexcFundingRows(),
         fetchHtxFundingRows(),
         fetchLbankFundingRows(),
-        fetchHyperliquidFundingRows()
+        fetchHyperliquidFundingRows(),
+        fetchApexFundingRows()
       ])
       const rowsRaw = [
         ...(bp ?? []),
@@ -81,7 +83,8 @@ export function useUnifiedFundingQuery() {
         ...(mx ?? []),
         ...(hx ?? []),
         ...(lb ?? []),
-        ...(hl ?? [])
+        ...(hl ?? []),
+        ...(ap ?? [])
       ]
       return rowsRaw.map(r => ({ id: uuidv4(), ...r }))
     }
