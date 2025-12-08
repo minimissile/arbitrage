@@ -40,3 +40,38 @@ export async function fetchReyaFundingRows(): Promise<FundingRow[]> {
     return []
   }
 }
+
+export async function fetchReyaFundingRow(symbol: string): Promise<FundingRow | null> {
+  const cycle = 1
+  const now = Date.now()
+  const base = new Date(now)
+  base.setMinutes(0, 0, 0)
+  let nextFundingTimestamp = base.getTime()
+  if (nextFundingTimestamp <= now) nextFundingTimestamp += 60 * 60 * 1000
+
+  try {
+    const list = await get<any[]>('https://api.reya.xyz/api/markets')
+    if (!Array.isArray(list)) return null
+    const baseSym = symbol.toUpperCase()
+    const item = (list as any[]).find(i => {
+      const q = String(i.quoteToken ?? i.ticker ?? '').toUpperCase()
+      return q === baseSym
+    })
+    if (!item) return null
+    const price = Number(item.markPrice ?? 0)
+    const fundingRate = Number(item.fundingRate ?? 0) / 100
+    const annualPct = Number(item.fundingRateAnnualized ?? 0) / 100
+    const dailyFundingRate = annualPct / 365
+    return {
+      exchange: 'Reya',
+      symbol: baseSym,
+      fundingRate,
+      nextFundingTimestamp,
+      price,
+      dailyFundingRate,
+      cycle
+    }
+  } catch (_err) {
+    return null
+  }
+}

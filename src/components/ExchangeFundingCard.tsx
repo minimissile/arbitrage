@@ -39,11 +39,11 @@ export default function ExchangeFundingCard(row: FundingRow) {
       <Text fontSize={'xs'} fontWeight="medium">
         {fundingFormat.formatFundingRate(entry.fundingRate)}
       </Text>
-      {entry.price !== undefined && (
-        <Text fontSize="xs" color="gray.600">
-          价格: {fundingFormat.formatPrice(entry.price)}
-        </Text>
-      )}
+
+      <Text fontSize="xs" color="gray.600">
+        价格: {fundingFormat.formatPrice(entry?.price)}
+      </Text>
+
       <Text color="gray.600">日化: {fundingFormat.formatFundingRate(entry.dailyFundingRate)}</Text>
       <Text color="gray.600">周期: {entry.cycle}h</Text>
       <Text color="gray.600">结算: {fundingFormat.formatTime(entry.nextFundingTimestamp)}</Text>

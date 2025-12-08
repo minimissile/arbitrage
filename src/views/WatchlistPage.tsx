@@ -24,6 +24,12 @@ import type { FundingRow } from '@/types/funding'
 import { fetchAsterFundingRow } from '@/api/aster'
 import { fetchEdgexFundingRowBySymbol } from '@/api/edgex'
 import { fetchBinanceFundingRow } from '@/api/binance'
+import { fetchBackpackFundingRow } from '@/api/backpack'
+import { fetchBybitFundingRow } from '@/api/bybit'
+import { fetchReyaFundingRow } from '@/api/reya'
+import { fetchBitgetFundingRow } from '@/api/bitget'
+import { fetchGateFundingRow } from '@/api/gate'
+import { fetchOkxFundingRow } from '@/api/okx'
 
 /**
  * 观察列表页面
@@ -40,6 +46,12 @@ export default function WatchlistPage() {
   const [asterRows, setAsterRows] = useState<Record<string, FundingRow | null>>({})
   const [edgexRows, setEdgexRows] = useState<Record<string, FundingRow | null>>({})
   const [binanceRows, setBinanceRows] = useState<Record<string, FundingRow | null>>({})
+  const [backpackRows, setBackpackRows] = useState<Record<string, FundingRow | null>>({})
+  const [bybitRows, setBybitRows] = useState<Record<string, FundingRow | null>>({})
+  const [reyaRows, setReyaRows] = useState<Record<string, FundingRow | null>>({})
+  const [bitgetRows, setBitgetRows] = useState<Record<string, FundingRow | null>>({})
+  const [gateRows, setGateRows] = useState<Record<string, FundingRow | null>>({})
+  const [okxRows, setOkxRows] = useState<Record<string, FundingRow | null>>({})
 
   const apply = () => {
     const tokens = text
@@ -64,11 +76,55 @@ export default function WatchlistPage() {
 
   useEffect(() => {
     const run = async () => {
-      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchAsterFundingRow(s)])
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchBybitFundingRow(s)])
       const results = await Promise.all(tasks)
       const map: Record<string, FundingRow | null> = {}
       for (const [sym, row] of results) map[sym] = row
-      setAsterRows(map)
+      setBybitRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchReyaFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setReyaRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchBitgetFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setBitgetRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchGateFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setGateRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchOkxFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setOkxRows(map)
     }
     run().then()
   }, [watchlistSymbols])
@@ -94,6 +150,33 @@ export default function WatchlistPage() {
     }
     run().then()
   }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchBackpackFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setBackpackRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchBybitFundingRow(s)])
+
+      console.log('tasks', tasks)
+
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setBybitRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  console.log('watchlistSymbols', watchlistSymbols)
 
   return (
     <Box display="grid" gap={6}>
@@ -200,6 +283,22 @@ export default function WatchlistPage() {
                       {group.entries.map(e => (
                         <ExchangeFundingCard key={`${e.exchange}-${group.symbol}`} {...e} />
                       ))}
+                      {gateRows[group.symbol] && (
+                        <ExchangeFundingCard key={`Gate-${group.symbol}`} {...gateRows[group.symbol]!} />
+                      )}
+                      {okxRows[group.symbol] && <ExchangeFundingCard key={`OKX-${group.symbol}`} {...okxRows[group.symbol]!} />}
+                      {bitgetRows[group.symbol] && (
+                        <ExchangeFundingCard key={`Bitget-${group.symbol}`} {...bitgetRows[group.symbol]!} />
+                      )}
+                      {reyaRows[group.symbol] && (
+                        <ExchangeFundingCard key={`Reya-${group.symbol}`} {...reyaRows[group.symbol]!} />
+                      )}
+                      {bybitRows[group.symbol] && (
+                        <ExchangeFundingCard key={`Bybit-${group.symbol}`} {...bybitRows[group.symbol]!} />
+                      )}
+                      {backpackRows[group.symbol] && (
+                        <ExchangeFundingCard key={`Backpack-${group.symbol}`} {...backpackRows[group.symbol]!} />
+                      )}
                       {binanceRows[group.symbol] && (
                         <ExchangeFundingCard key={`Binance-${group.symbol}`} {...binanceRows[group.symbol]!} />
                       )}

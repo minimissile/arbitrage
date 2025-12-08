@@ -20,7 +20,7 @@ export function formatTime(ts: number): string {
  * 格式化价格
  * @param pStr 价格字符串
  */
-export function formatPrice(pStr: string | number): string {
+export function formatPrice(pStr: string | number | undefined): string {
   const p = Number(pStr)
   if (!isFinite(p)) return '--'
   return p >= 100 ? p.toFixed(2) : p >= 1 ? p.toFixed(4) : p.toFixed(6)

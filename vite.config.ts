@@ -54,6 +54,12 @@ export default defineConfig({
         secure: true,
         rewrite: p => p.replace(/^\/bybit/, '')
       },
+      '/bybit-www': {
+        target: 'https://www.bybit.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/bybit-www/, '')
+      },
       '/coinglass': {
         target: 'https://open-api-v4.coinglass.com',
         changeOrigin: true,
@@ -71,6 +77,24 @@ export default defineConfig({
         changeOrigin: true,
         secure: true,
         rewrite: p => p.replace(/^\/binance/, '')
+      },
+      '/bitget': {
+        target: 'https://api.bitget.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/bitget/, '')
+      },
+      '/gate': {
+        target: 'https://api.gateio.ws',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/gate/, '')
+      },
+      '/okx': {
+        target: 'https://www.okx.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/okx/, '')
       }
     }
   }

@@ -44,3 +44,36 @@ export async function fetchBybitFundingRows(): Promise<FundingRow[]> {
     return []
   }
 }
+
+export async function fetchBybitFundingRow(symbol: string): Promise<FundingRow | null> {
+  try {
+    const path = '/v5/market/tickers'
+    const params = { category: 'linear' }
+    const data = await get<any>(`/bybit${path}`, { params })
+    const list: any[] = data?.result?.list ?? []
+    const base = symbol.toUpperCase()
+    const QUOTES = ['USDT', 'USDC', 'USD', 'BUSD']
+    const canon = (s: string) => {
+      const up = String(s ?? '').toUpperCase()
+      const q = QUOTES.find(q => up.endsWith(q))
+      return q ? up.slice(0, up.length - q.length) : up
+    }
+    const item = (list as any[]).find(i => canon(i.symbol) === base)
+    if (!item) return null
+    const rate = Number(item.fundingRate ?? 0)
+    const price = Number(item.lastPrice ?? item.markPrice ?? item.indexPrice ?? 0)
+    const ts = Number(item.nextFundingTime ?? 0)
+    const cycle = Number(item.fundingRateInterval ?? 4) || 4
+    return {
+      exchange: 'Bybit',
+      symbol: base,
+      fundingRate: rate,
+      nextFundingTimestamp: ts,
+      price,
+      dailyFundingRate: rate * (24 / cycle),
+      cycle
+    }
+  } catch {
+    return null
+  }
+}

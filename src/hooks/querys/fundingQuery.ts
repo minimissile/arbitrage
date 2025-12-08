@@ -6,6 +6,10 @@ import { fetchReyaFundingRows } from '@/api/reya'
 import type { FundingRow } from '@/types/funding'
 import { v4 as uuidv4 } from 'uuid'
 import { fetchAsterFundingRows } from '@/api/aster.ts'
+import { fetchBinanceFundingRows } from '@/api/binance'
+import { fetchBitgetFundingRows } from '@/api/bitget'
+import { fetchGateFundingRows } from '@/api/gate'
+import { fetchOkxFundingRows } from '@/api/okx'
 
 /**
  * backpack 资金费率查询
@@ -41,13 +45,26 @@ export function useUnifiedFundingQuery() {
     refetchInterval: 60_000,
     placeholderData: keepPreviousData,
     queryFn: async () => {
-      const [bp, by, ry, ast] = await Promise.all([
+      const [bp, by, ry, ast, bn, bg, gt, ok] = await Promise.all([
         fetchBackpackFundingRows(),
         fetchBybitFundingRows(),
         fetchReyaFundingRows(),
-        fetchAsterFundingRows()
+        fetchAsterFundingRows(),
+        fetchBinanceFundingRows(),
+        fetchBitgetFundingRows(),
+        fetchGateFundingRows(),
+        fetchOkxFundingRows()
       ])
-      const rowsRaw = [...(bp ?? []), ...(by ?? []), ...(ry ?? []), ...(ast ?? [])]
+      const rowsRaw = [
+        ...(bp ?? []),
+        ...(by ?? []),
+        ...(ry ?? []),
+        ...(ast ?? []),
+        ...(bn ?? []),
+        ...(bg ?? []),
+        ...(gt ?? []),
+        ...(ok ?? [])
+      ]
       return rowsRaw.map(r => ({ id: uuidv4(), ...r }))
     }
   })

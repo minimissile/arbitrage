@@ -31,3 +31,28 @@ export async function fetchBackpackFundingRows(): Promise<FundingRow[]> {
     return []
   }
 }
+
+function canonSymbol(s: string): string {
+  const up = String(s || '').toUpperCase()
+  const sepMatch = up.match(/^([A-Z0-9]+)[_\-/]/)
+  if (sepMatch) return sepMatch[1]
+  const QUOTES = ['USDT', 'USDC', 'USD', 'BUSD', 'EUR', 'AUD', 'GBP', 'JPY', 'BRL', 'TRY', 'IDR']
+  const quote = QUOTES.find(q => up.endsWith(q))
+  if (quote) return up.slice(0, up.length - quote.length)
+  return up.replace(/[_-]?PERP$/, '')
+}
+
+/**
+ * 获取 backpack 单币种资金费率信息（通过列表匹配）
+ * @param symbol 币种（如 BTC、ETH）
+ */
+export async function fetchBackpackFundingRow(symbol: string): Promise<FundingRow | null> {
+  try {
+    const list = await fetchBackpackFundingRows()
+    const base = symbol.toUpperCase()
+    const found = list.find(r => canonSymbol(r.symbol) === base)
+    return found ?? null
+  } catch {
+    return null
+  }
+}
