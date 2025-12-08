@@ -95,6 +95,42 @@ export default defineConfig({
         changeOrigin: true,
         secure: true,
         rewrite: p => p.replace(/^\/okx/, '')
+      },
+      '/kucoin': {
+        target: 'https://api-futures.kucoin.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/kucoin/, '')
+      },
+      '/bingx': {
+        target: 'https://open-api.bingx.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/bingx/, '')
+      },
+      '/mexc': {
+        target: 'https://contract.mexc.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/mexc/, '')
+      },
+      '/htx': {
+        target: 'https://api.hbdm.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/htx/, '')
+      },
+      '/lbank': {
+        target: 'https://lbkperp.lbank.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/lbank/, '')
+      },
+      '/hyperliquid': {
+        target: 'https://api.hyperliquid.xyz',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/hyperliquid/, '')
       }
     }
   }

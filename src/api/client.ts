@@ -36,3 +36,8 @@ export async function get<T>(url: string, config?: AxiosRequestConfig): Promise<
   const res = await api.get(url, config)
   return res.data as T
 }
+
+export async function post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  const res = await api.post(url, data, config)
+  return res.data as T
+}

@@ -30,6 +30,12 @@ import { fetchReyaFundingRow } from '@/api/reya'
 import { fetchBitgetFundingRow } from '@/api/bitget'
 import { fetchGateFundingRow } from '@/api/gate'
 import { fetchOkxFundingRow } from '@/api/okx'
+import { fetchKucoinFundingRow } from '@/api/kucoin'
+import { fetchBingxFundingRow } from '@/api/bingx'
+import { fetchHtxFundingRow } from '@/api/htx'
+import { fetchLbankFundingRow } from '@/api/lbank'
+import { fetchHyperliquidFundingRow } from '@/api/hyperliquid'
+import { fetchMexcFundingRow } from '@/api/mexc'
 
 /**
  * 观察列表页面
@@ -52,6 +58,12 @@ export default function WatchlistPage() {
   const [bitgetRows, setBitgetRows] = useState<Record<string, FundingRow | null>>({})
   const [gateRows, setGateRows] = useState<Record<string, FundingRow | null>>({})
   const [okxRows, setOkxRows] = useState<Record<string, FundingRow | null>>({})
+  const [kucoinRows, setKucoinRows] = useState<Record<string, FundingRow | null>>({})
+  const [bingxRows, setBingxRows] = useState<Record<string, FundingRow | null>>({})
+  const [htxRows, setHtxRows] = useState<Record<string, FundingRow | null>>({})
+  const [lbankRows, setLbankRows] = useState<Record<string, FundingRow | null>>({})
+  const [hyperRows, setHyperRows] = useState<Record<string, FundingRow | null>>({})
+  const [mexcRows, setMexcRows] = useState<Record<string, FundingRow | null>>({})
 
   const apply = () => {
     const tokens = text
@@ -125,6 +137,72 @@ export default function WatchlistPage() {
       const map: Record<string, FundingRow | null> = {}
       for (const [sym, row] of results) map[sym] = row
       setOkxRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchKucoinFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setKucoinRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchBingxFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setBingxRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchHtxFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setHtxRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchLbankFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setLbankRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchHyperliquidFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setHyperRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchMexcFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setMexcRows(map)
     }
     run().then()
   }, [watchlistSymbols])
@@ -287,6 +365,22 @@ export default function WatchlistPage() {
                         <ExchangeFundingCard key={`Gate-${group.symbol}`} {...gateRows[group.symbol]!} />
                       )}
                       {okxRows[group.symbol] && <ExchangeFundingCard key={`OKX-${group.symbol}`} {...okxRows[group.symbol]!} />}
+                      {kucoinRows[group.symbol] && (
+                        <ExchangeFundingCard key={`KuCoin-${group.symbol}`} {...kucoinRows[group.symbol]!} />
+                      )}
+                      {bingxRows[group.symbol] && (
+                        <ExchangeFundingCard key={`BingX-${group.symbol}`} {...bingxRows[group.symbol]!} />
+                      )}
+                      {mexcRows[group.symbol] && (
+                        <ExchangeFundingCard key={`MEXC-${group.symbol}`} {...mexcRows[group.symbol]!} />
+                      )}
+                      {htxRows[group.symbol] && <ExchangeFundingCard key={`HTX-${group.symbol}`} {...htxRows[group.symbol]!} />}
+                      {lbankRows[group.symbol] && (
+                        <ExchangeFundingCard key={`LBank-${group.symbol}`} {...lbankRows[group.symbol]!} />
+                      )}
+                      {hyperRows[group.symbol] && (
+                        <ExchangeFundingCard key={`Hyperliquid-${group.symbol}`} {...hyperRows[group.symbol]!} />
+                      )}
                       {bitgetRows[group.symbol] && (
                         <ExchangeFundingCard key={`Bitget-${group.symbol}`} {...bitgetRows[group.symbol]!} />
                       )}
