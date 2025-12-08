@@ -65,6 +65,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: true,
         rewrite: p => p.replace(/^\/edgex/, '')
+      },
+      '/binance': {
+        target: 'https://www.binance.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/binance/, '')
       }
     }
   }

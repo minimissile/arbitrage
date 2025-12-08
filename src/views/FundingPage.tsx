@@ -3,6 +3,7 @@ import { Box, Flex, Heading, Text, HStack, Skeleton, SkeletonText } from '@chakr
 import { useUnifiedFundingQuery, fundingFormat } from '@/hooks/querys'
 import { useEffect, useState } from 'react'
 import { fetchAsterFundingRows } from '@/api/aster'
+import { fetchBinanceFundingRows } from '@/api/binance'
 import ExchangeFundingCard from '@/components/ExchangeFundingCard'
 
 /**
@@ -11,8 +12,10 @@ import ExchangeFundingCard from '@/components/ExchangeFundingCard'
  */
 export default function FundingPage() {
   const { dataUpdatedAt } = useUnifiedFundingQuery()
-  const [asterRows, setAsterRows] = useState([] as ReturnType<typeof Array<never>> & any)
+  const [asterRows, setAsterRows] = useState([] as any[])
   const [asterLoading, setAsterLoading] = useState(false)
+  const [binanceRows, setBinanceRows] = useState([] as any[])
+  const [binanceLoading, setBinanceLoading] = useState(false)
 
   useEffect(() => {
     const run = async () => {
@@ -20,6 +23,16 @@ export default function FundingPage() {
       const rows = await fetchAsterFundingRows()
       setAsterRows(rows)
       setAsterLoading(false)
+    }
+    run()
+  }, [])
+
+  useEffect(() => {
+    const run = async () => {
+      setBinanceLoading(true)
+      const rows = await fetchBinanceFundingRows()
+      setBinanceRows(rows)
+      setBinanceLoading(false)
     }
     run()
   }, [])
@@ -69,6 +82,37 @@ export default function FundingPage() {
             <HStack gap={2} wrap="wrap">
               {asterRows.map((row: any) => (
                 <ExchangeFundingCard key={`aster-${row.exchange}-${row.symbol}`} {...row} />
+              ))}
+            </HStack>
+          )}
+        </Box>
+      </Box>
+
+      <Box>
+        <Heading size="md" color="gray.900">
+          Binance 资金费率（USDT）
+        </Heading>
+        <Text fontSize="sm" color="gray.600">
+          来自 Binance 全量接口，周期来自 funding-info
+        </Text>
+        <Box mt={3} borderWidth="1px" borderColor="gray.200" bg="white" borderRadius="lg" p={3}>
+          {binanceLoading ? (
+            <HStack gap={2} wrap="wrap">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Box key={`binance-skeleton-${i}`} px={2} py={2} borderWidth="0.5px" borderRadius="base" minW="200px">
+                  <Skeleton w="96px" h="12px" mb={2} />
+                  <SkeletonText noOfLines={3} spacing="2" skeletonHeight="10px" />
+                </Box>
+              ))}
+            </HStack>
+          ) : binanceRows.length === 0 ? (
+            <Text fontSize="sm" color="gray.600">
+              暂无 Binance 数据
+            </Text>
+          ) : (
+            <HStack gap={2} wrap="wrap">
+              {binanceRows.map((row: any) => (
+                <ExchangeFundingCard key={`binance-${row.exchange}-${row.symbol}`} {...row} />
               ))}
             </HStack>
           )}

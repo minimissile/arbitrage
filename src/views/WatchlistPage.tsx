@@ -23,6 +23,7 @@ import ExchangeFundingCard from '@/components/ExchangeFundingCard'
 import type { FundingRow } from '@/types/funding'
 import { fetchAsterFundingRow } from '@/api/aster'
 import { fetchEdgexFundingRowBySymbol } from '@/api/edgex'
+import { fetchBinanceFundingRow } from '@/api/binance'
 
 /**
  * 观察列表页面
@@ -38,6 +39,7 @@ export default function WatchlistPage() {
   const [text, setText] = useState('')
   const [asterRows, setAsterRows] = useState<Record<string, FundingRow | null>>({})
   const [edgexRows, setEdgexRows] = useState<Record<string, FundingRow | null>>({})
+  const [binanceRows, setBinanceRows] = useState<Record<string, FundingRow | null>>({})
 
   const apply = () => {
     const tokens = text
@@ -78,6 +80,17 @@ export default function WatchlistPage() {
       const map: Record<string, FundingRow | null> = {}
       for (const [sym, row] of results) map[sym] = row
       setEdgexRows(map)
+    }
+    run().then()
+  }, [watchlistSymbols])
+
+  useEffect(() => {
+    const run = async () => {
+      const tasks = watchlistSymbols.map(async s => [s.toUpperCase(), await fetchBinanceFundingRow(s)])
+      const results = await Promise.all(tasks)
+      const map: Record<string, FundingRow | null> = {}
+      for (const [sym, row] of results) map[sym] = row
+      setBinanceRows(map)
     }
     run().then()
   }, [watchlistSymbols])
@@ -187,6 +200,9 @@ export default function WatchlistPage() {
                       {group.entries.map(e => (
                         <ExchangeFundingCard key={`${e.exchange}-${group.symbol}`} {...e} />
                       ))}
+                      {binanceRows[group.symbol] && (
+                        <ExchangeFundingCard key={`Binance-${group.symbol}`} {...binanceRows[group.symbol]!} />
+                      )}
                       {asterRows[group.symbol] && (
                         <ExchangeFundingCard key={`Aster-${group.symbol}`} {...asterRows[group.symbol]!} />
                       )}
