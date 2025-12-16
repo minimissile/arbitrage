@@ -8,7 +8,10 @@ import { memo } from 'react'
  */
 function Header() {
   const location = useLocation()
-  const isFunding = location.pathname.startsWith('/funding')
+  const pathname = location.pathname
+  const isDashboard = pathname === '/' || pathname === '/dashboard'
+  const isFunding = pathname.startsWith('/funding')
+  const isPancake = pathname.startsWith('/pancake')
   const logoUrl = new URL('../assets/logo.svg', import.meta.url).href
 
   return (
@@ -32,8 +35,8 @@ function Header() {
               <Button
                 as={RouterLink}
                 to="/"
-                colorScheme={!isFunding ? 'primary' : undefined}
-                variant={!isFunding ? 'solid' : 'ghost'}
+                colorScheme={isDashboard ? 'primary' : undefined}
+                variant={isDashboard ? 'solid' : 'ghost'}
               >
                 仪表盘
               </Button>
@@ -44,6 +47,14 @@ function Header() {
                 variant={isFunding ? 'solid' : 'ghost'}
               >
                 资金费率
+              </Button>
+              <Button
+                as={RouterLink}
+                to="/pancake"
+                colorScheme={isPancake ? 'primary' : undefined}
+                variant={isPancake ? 'solid' : 'ghost'}
+              >
+                Pancake价格
               </Button>
             </HStack>
           </HStack>

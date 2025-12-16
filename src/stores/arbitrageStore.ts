@@ -272,13 +272,17 @@ export const useArbitrageStore = create<ArbitrageStore>((set, get) => ({
     set({ watchlistSymbols: norm })
     try {
       localStorage.setItem('arb_watchlist_symbols', JSON.stringify(norm))
-    } catch {}
+    } catch {
+      return
+    }
   },
   clearWatchlist: () => {
     set({ watchlistSymbols: [], watchlistData: [] })
     try {
       localStorage.removeItem('arb_watchlist_symbols')
-    } catch {}
+    } catch {
+      return
+    }
   },
   startWatch: async () => {
     set({ watchlistLoading: true })

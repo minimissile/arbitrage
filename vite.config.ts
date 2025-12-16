@@ -137,6 +137,12 @@ export default defineConfig({
         changeOrigin: true,
         secure: true,
         rewrite: p => p.replace(/^\/apex/, '')
+      },
+      '/pancake': {
+        target: 'https://api.pancakeswap.info',
+        changeOrigin: true,
+        secure: true,
+        rewrite: p => p.replace(/^\/pancake/, '')
       }
     }
   }
